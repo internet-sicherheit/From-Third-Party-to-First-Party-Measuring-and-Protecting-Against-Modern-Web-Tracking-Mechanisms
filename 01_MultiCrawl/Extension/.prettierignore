@@ -1,0 +1,19 @@
+node_modules
+build
+test
+src/**.js
+.idea/*
+
+coverage
+.nyc_output
+*.log
+
+yarn.lock
+package-lock.json
+
+# built extension artifacts
+dist
+openwpm.xpi
+bundled/content.js
+bundled/feature.js
+bundled/privileged/sockets/bufferpack.js

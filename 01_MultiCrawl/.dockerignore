@@ -1,0 +1,29 @@
+# Docker volume
+docker-volume
+
+# Git metadata
+.git
+
+# pytest
+.pytest_cache
+
+# firefox directories
+firefox-bin
+*.app
+
+# PyCharm
+.idea
+
+# Local Python virtual environments
+venv
+
+# npm packages
+Extension/node_modules
+Extension/webext-instrumentation/node_modules
+
+# built extension artifacts
+Extension/dist
+Extension/openwpm.xpi
+Extension/src/content.js
+Extension/src/feature.js
+Extension/build

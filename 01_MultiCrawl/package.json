@@ -1,0 +1,37 @@
+{
+  "name": "openwpm",
+  "author": "OpenWPM Contributors",
+  "description": "OpenWPM NodeJS Utilities",
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions",
+    "jsonschema2md": "jsonschema2md || true",
+    "render_schema_docs": "jsonschema2md --input=schemas --out=docs/schemas --schema-out=-",
+    "validate_markdown_links": "find . -name \\*.md  -not -path '*/node_modules/*' -exec markdown-link-check -q {} \\;",
+    "lint_markdown": "find . -name \\*.md  -not -path '*/node_modules/*' -exec markdownlint {} \\;"
+  },
+  "scripts-info": {
+    "jsonschema2md": "Display the help for jsonschema2md",
+    "render_schema_docs": "Render the JSON schemas in `schemas` folder to documentation in `docs/schemas`.",
+    "validate_markdown_links": "Checks if all links referred to in the documentation are still working. Tends to get rate limited by github",
+    "lint_markdown": "Warnings about markdown styling. Should not be taken as an absolute source of truth"
+  },
+  "license": "MPL-2.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openwpm/OpenWPM.git"
+  },
+  "homepage": "",
+  "devDependencies": {
+    "@adobe/jsonschema2md": "^7.1.5",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.1",
+    "commitlint": "^18.6.1",
+    "markdown-link-check": "^3.11.2",
+    "markdownlint-cli": "^0.39.0"
+  },
+  "resolutions": {
+    "glob-parent": "^6.0.2",
+    "trim-newlines": "^3.0.1"
+  }
+}
