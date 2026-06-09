@@ -1,0 +1,1 @@
+min_support=0.001: 456 itemsets, 435 significant (p<0.05 & |log2_lift|>1)
