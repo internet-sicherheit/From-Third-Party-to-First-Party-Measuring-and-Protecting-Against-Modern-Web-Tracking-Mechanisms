@@ -1,0 +1,19 @@
+*.log
+.idea/*
+Code/Preprocessing/JavaScript/__pycache__
+
+# Ignore specific OpenWPM crawl data and archives
+03_OpenWPM/19032025_crawl-data.sqlite
+03_OpenWPM/19032025_crawl-data.zip
+03_OpenWPM/crawl-data.sqlite
+03_OpenWPM/sst_OpenWPM.zip
+
+Code/Preprocessing/cookie_db.csv
+02_Data/js_hashes/benchmarks/*.txt
+02_Data/model_data/*
+02_data/*
+Code/test/*
+Code/Preprocessing/EasyList_Classification/input/*
+Code/Preprocessing/EasyList_Classification/output/*
+
+dump/*
