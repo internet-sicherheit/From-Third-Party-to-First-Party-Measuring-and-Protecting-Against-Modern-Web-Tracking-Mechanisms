@@ -1,0 +1,7 @@
+[Adblock Plus 2.0]
+! Title: Generated param-combo rules
+! Expires: 10 days
+
+/[\?&]if=[^#]*&r=[^#]*&v=/
+/[\?&]if=[^#]*&v=[^#]*&r=/
+/[\?&]r=[^#]*&if=[^#]*&v=/

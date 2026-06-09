@@ -1,0 +1,188 @@
+{
+  "author": "eyeo GmbH",
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "68.0",
+      "id": "{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5c}",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  },
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "js": [
+        "vendor/@eyeo/webext-ad-filtering-solution/content.js",
+        "polyfill.js",
+        "composer.preload.js",
+        "bypass.preload.js"
+      ],
+      "match_about_blank": true,
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "onpage-dialog.preload.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "all_frames": true,
+      "js": [
+        "polyfill.js",
+        "onpage-dialog-ui.preload.js"
+      ],
+      "match_about_blank": true,
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "yt-auto-allowlist.preload.js"
+      ],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "premium.preload.js",
+        "premium-onboarding.preload.js"
+      ],
+      "matches": [
+        "https://accounts.adblockplus.org/*",
+        "https://*.myaccount.adblockplus.org/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "info-injector.preload.js"
+      ],
+      "matches": [
+        "https://adblockplus.org/*",
+        "https://new.adblockplus.org/*",
+        "https://welcome.adblockplus.org/*",
+        "https://accounts.adblockplus.org/*",
+        "https://*.myaccount.adblockplus.org/*",
+        "https://getadblock.com/*",
+        "https://vpn.getadblock.com/*",
+        "https://*.myaccount.getadblock.com/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "options.preload.js"
+      ],
+      "matches": [
+        "https://adblockplus.org/*",
+        "https://welcome.adblockplus.org/*",
+        "https://*.myaccount.adblockplus.org/*"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "all_frames": true,
+      "js": [
+        "polyfill.js",
+        "public-api.preload.js"
+      ],
+      "matches": [
+        "https://btloader.com/trustedIframe.html?o=*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "polyfill.js",
+        "conflict-detection.preload.js"
+      ],
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://*.facebook.com/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "all_frames": true,
+      "js": [
+        "polyfill.js",
+        "cookie-banner-detection.preload.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "name": "__MSG_name_releasebuild__",
+  "short_name": "__MSG_name__",
+  "description": "__MSG_description__",
+  "default_locale": "en_US",
+  "devtools_page": "devtools.html",
+  "icons": {
+    "16": "icons/abp-16.png",
+    "32": "icons/abp-32.png",
+    "48": "icons/logo/abp-48.png",
+    "64": "icons/logo/abp-64.png",
+    "128": "icons/logo/abp-128.png"
+  },
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "options.html"
+  },
+  "optional_permissions": [
+    "management"
+  ],
+  "manifest_version": 2,
+  "background": {
+    "persistent": true,
+    "scripts": [
+      "polyfill.js",
+      "background.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/abp-16.png",
+      "20": "icons/abp-20.png",
+      "32": "icons/abp-32.png",
+      "40": "icons/abp-40.png"
+    },
+    "default_title": "__MSG_name__"
+  },
+  "permissions": [
+    "<all_urls>",
+    "alarms",
+    "contextMenus",
+    "notifications",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "version": "4.32.2.10"
+}

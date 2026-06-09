@@ -1,0 +1,60 @@
+{
+  "add": {
+    "message": "చేర్చు"
+  },
+  "cancel": {
+    "message": "రద్దు చేయు"
+  },
+  "block_element": {
+    "message": "అంశాన్ని నిరోధించు"
+  },
+  "options_customFilter_cancel": {
+    "message": "రద్దు చేయు"
+  },
+  "options_filterList_column_name": {
+    "message": "జాబితాలని వడకొట్టు"
+  },
+  "options_filterList_title": {
+    "message": "జాబితాలని వడకొట్టు"
+  },
+  "options_filterList_updateNow": {
+    "message": "ఇప్పుడు నవీనీకరించు"
+  },
+  "options_tab_general": {
+    "message": "సాధారణం"
+  },
+  "line": {
+    "message": "గీత $number$: $message$",
+    "placeholders": {
+      "message": {
+        "content": "$2",
+        "example": "Some error on this line"
+      },
+      "number": {
+        "content": "$1",
+        "example": "42"
+      }
+    }
+  },
+  "name_devbuild": {
+    "message": "Adblock Plus డెవలప్మెంట్ సాఫ్ట్వేర్ ఇది"
+  },
+  "mops_action_cancel": {
+    "message": "రద్దు చేయు"
+  },
+  "notification_without_buttons": {
+    "message": "నోటిఫికేషన్ నొక్కితే అన్ని లింక్స్ దాంట్లో తెరుసుకొంటాయి."
+  },
+  "easy_create_filter": {
+    "message": "అంశాన్ని నిరోధించు"
+  },
+  "options_short": {
+    "message": "ఐచ్ఛికాలు"
+  },
+  "stats_label_page": {
+    "message": "ఈ పేజీ లో"
+  },
+  "stats_label_total": {
+    "message": "మొత్తం"
+  }
+}

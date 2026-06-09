@@ -1,0 +1,44 @@
+{
+  "add": {
+    "message": "Dodaj"
+  },
+  "cancel": {
+    "message": "Poništiti"
+  },
+  "options_close": {
+    "message": "zatvori"
+  },
+  "options_customFilter_cancel": {
+    "message": "Poništiti"
+  },
+  "options_filterList_column_status": {
+    "message": "Status"
+  },
+  "options_filterList_lastDownload_checksumMismatch": {
+    "message": "Nije uspjelo, nepodudarnost checksum-a"
+  },
+  "options_filterList_lastDownload_invalidURL": {
+    "message": "Neuspjeh, adresa nije validna"
+  },
+  "options_page_document_title": {
+    "message": "Postavke"
+  },
+  "options_page_title": {
+    "message": "Postavke"
+  },
+  "continue": {
+    "message": "Nastavi"
+  },
+  "filters_subscription_lastDownload_connectionError": {
+    "message": "Nije uspjelo, download neuspjeh"
+  },
+  "mops_action_cancel": {
+    "message": "Poništiti"
+  },
+  "mops_subscriptions_header": {
+    "message": "filteri pretplate"
+  },
+  "options_short": {
+    "message": "Opcije"
+  }
+}

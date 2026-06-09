@@ -1,0 +1,496 @@
+{
+  "add": {
+    "message": "Agregar"
+  },
+  "cancel": {
+    "message": "Cancelar"
+  },
+  "common_copyright": {
+    "message": "Copyright © $year$ Todos los derechos reservados. Adblock Plus® es una marca registrada de <a0>eyeo GmbH</a0>.",
+    "placeholders": {
+      "year": {
+        "content": "$1",
+        "example": "1984"
+      }
+    }
+  },
+  "common_feature_anti_adblock_title": {
+    "message": "Ocultar mensajes de advertencia de Adblock"
+  },
+  "common_feature_circumvention_title": {
+    "message": "Lista de filtros antielusión de ABP"
+  },
+  "common_feature_malware_title": {
+    "message": "Bloquear \"malware\""
+  },
+  "common_feature_privacy_title": {
+    "message": "Bloquear el seguimiento adicional"
+  },
+  "common_feature_social_title": {
+    "message": "Bloquear el seguimiento de los íconos de redes sociales"
+  },
+  "common_notification_hide": {
+    "message": "Cerrar la notificación"
+  },
+  "copy_selected": {
+    "message": "Copiar los seleccionados"
+  },
+  "delete": {
+    "message": "Borrar"
+  },
+  "filter_action_failed": {
+    "message": "Ups… algo salió mal, ¡por favor, intentalo de nuevo!"
+  },
+  "block_element": {
+    "message": "Bloquear Elemento"
+  },
+  "day1_blockelement_description": {
+    "message": "Bloquealos con la útil función de Adblock Plus \"Bloquear elemento\"."
+  },
+  "day1_blockelement_more": {
+    "message": "Aprendé cómo"
+  },
+  "day1_blockelement_screenshot": {
+    "message": "Ejemplo de una ventana emergente con el botón de \"Bloquear elemento\" resaltado."
+  },
+  "day1_blockelement_title": {
+    "message": "¿Cansado de que las secciones de comentarios te desanimen?"
+  },
+  "day1_community_contact": {
+    "message": "¡Contáctanos!"
+  },
+  "day1_community_contact_subject": {
+    "message": "¡Buscando apoyo!"
+  },
+  "day1_community_description_1": {
+    "message": "Al ser un proyecto de código abierto, dependemos de usuarios como vos para ayudarnos a mejorar la experiencia con el bloqueo de anuncios."
+  },
+  "day1_community_description_2": {
+    "message": "¿Qué nuevas funciones o características te gustaría ver? ¿Qué podemos mejorar? ¿Adblock Plus está haciendo que algunos sitios web funcionen mal?"
+  },
+  "day1_community_title": {
+    "message": "Unite a la comunidad de Adblock Plus"
+  },
+  "day1_header_more": {
+    "message": "Aprendé más sobre la publicidad maliciosa"
+  },
+  "day1_header_title": {
+    "message": "Adblock Plus <strong>bloqueó <em0>$ads$ anuncios</em0> en <em1>la última media hora</em1>,</strong> de los cuales algunos podrían tener contenido malicioso",
+    "placeholders": {
+      "ads": {
+        "content": "$1",
+        "example": "12,000"
+      }
+    }
+  },
+  "notification_day1_message": {
+    "message": "Esos son un montón de anuncios molestos. <a>Descubrí qué más se puede bloquear con Adblock Plus.</a>"
+  },
+  "notification_day1_title": {
+    "message": "¡Ya bloqueaste $ads$ anuncios!",
+    "placeholders": {
+      "ads": {
+        "content": "$1",
+        "example": "12,000"
+      }
+    }
+  },
+  "options_acceptableAds_dnt_notification": {
+    "message": "<strong>Nota:</strong> Tienes desactivada la función <strong>No realizar seguimiento (DNT)</strong> en los ajustes de tu navegador. Para que esta funcione correctamente, activa <strong>DNT</strong> en las preferencias de tu navegador. <a>Descubre cómo activar DNT</a>"
+  },
+  "options_acceptableAds_header": {
+    "message": "Publicidades aceptables"
+  },
+  "options_acceptableAds_privacy_label": {
+    "message": "Sólo permitir anuncios sin seguimiento de terceros"
+  },
+  "options_advanced_description": {
+    "message": "Personaliza Adblock Plus, añade o elimina listas de filtros, crea y mantén tus propias listas de filtros"
+  },
+  "options_close": {
+    "message": "CERRAR"
+  },
+  "options_control_remove_title": {
+    "message": "Eliminar"
+  },
+  "options_customFilter_cancel": {
+    "message": "Cancelar"
+  },
+  "options_customFilters_description": {
+    "message": "Escribe tus propios filtros personalizados para un mayor control sobre qué contenido permite o bloquea Adblock Plus."
+  },
+  "options_customFilters_title": {
+    "message": "CREAR Y EDITAR TU LISTA DE FILTROS"
+  },
+  "options_customFilters_widget_title": {
+    "message": "Mi lista de filtros"
+  },
+  "options_customize_blockElement": {
+    "message": "Mostrar la opción \"Bloquear elemento\" en el menú contextual (botón derecho)"
+  },
+  "options_customize_blockElement_tooltip": {
+    "message": "Bloquea temporalmente los elementos molestos en una página web (p. ej., imágenes o presentaciones de diapositivas animadas)."
+  },
+  "options_customize_showDevToolsPanel": {
+    "message": "Mostrar el panel de \"Adblock Plus\" en herramientas del desarrollador"
+  },
+  "options_customize_showNotifications": {
+    "message": "Mostrar avisos útiles"
+  },
+  "options_dialog_about_title": {
+    "message": "Acerca de Adblock Plus"
+  },
+  "options_dialog_about_trademark": {
+    "message": "Todos los derechos reservados. Adblock Plus® es una marca registrada."
+  },
+  "options_dialog_about_version": {
+    "message": "Número de versión $version$",
+    "placeholders": {
+      "version": {
+        "content": "$1",
+        "example": "2.6.7"
+      }
+    }
+  },
+  "options_dialog_import_subscription_location": {
+    "message": "Dirección URL de la lista de filtros"
+  },
+  "options_dialog_import_subscription_location_error": {
+    "message": "Introduce una dirección URL válida"
+  },
+  "options_dialog_import_title": {
+    "message": "Añadir una lista de filtros"
+  },
+  "options_dialog_language_other_empty": {
+    "message": "No hay idiomas disponibles."
+  },
+  "options_dialog_language_title": {
+    "message": "Seleccionar un idioma"
+  },
+  "options_dialog_predefined_confirm": {
+    "message": "Sí, utilizar esta lista de filtros"
+  },
+  "options_dialog_predefined_title": {
+    "message": "¿Seguro que deseas añadir esta lista de filtros?"
+  },
+  "options_email": {
+    "message": "Dirección de correo electrónico:"
+  },
+  "options_english": {
+    "message": "Inglés"
+  },
+  "options_filterList_add": {
+    "message": "Agregar una nueva lista de filtros"
+  },
+  "options_filterList_column_name": {
+    "message": "Listas de filtros"
+  },
+  "options_filterList_column_status": {
+    "message": "Estado"
+  },
+  "options_filterList_column_update": {
+    "message": "Última actualización"
+  },
+  "options_filterList_description": {
+    "message": "Cada ajuste de Adblock Plus funciona en base a una lista de filtros. A continuación se muestran las listas de filtros que se corresponden con todos tus ajustes de Adblock Plus. También puedes añadir filtros adicionales creados y mantenidos por nuestra comunidad de confianza."
+  },
+  "options_filterList_empty": {
+    "message": "No has añadido ninguna lista de filtros a Adblock Plus. Las listas de filtros que añadas se mostrarán aquí."
+  },
+  "options_filterList_hours": {
+    "message": "hace horas"
+  },
+  "options_filterList_lastDownload_checksumMismatch": {
+    "message": "Falló, el archivo de suma de comprobación no coincide"
+  },
+  "options_filterList_lastDownload_inProgress": {
+    "message": "Actualizando"
+  },
+  "options_filterList_lastDownload_invalidData": {
+    "message": "Error: lista de filtros no válida"
+  },
+  "options_filterList_lastDownload_invalidURL": {
+    "message": "Falló, no es una dirección válida"
+  },
+  "options_filterList_minutes": {
+    "message": "hace minutos"
+  },
+  "options_filterList_now": {
+    "message": "Hace un momento"
+  },
+  "options_filterList_source": {
+    "message": "Fuente"
+  },
+  "options_filterList_title": {
+    "message": "Listas de filtros"
+  },
+  "options_filterList_update": {
+    "message": "ACTUALIZAR TODAS LAS LISTAS DE FILTROS"
+  },
+  "options_filterList_updateNow": {
+    "message": "Actualizar ahora"
+  },
+  "options_filterList_website": {
+    "message": "Página web"
+  },
+  "options_footer_about": {
+    "message": "Acerca de Adblock Plus"
+  },
+  "options_footer_contribute": {
+    "message": "Contribuir"
+  },
+  "options_general_description": {
+    "message": "Determina qué muestra y oculta Adblock Plus en páginas web"
+  },
+  "options_help_description": {
+    "message": "Encuentra ayuda o contacta con nosotros"
+  },
+  "options_language_change": {
+    "message": "CAMBIAR"
+  },
+  "options_language_empty": {
+    "message": "No tienes ningún filtro específico de idiomas."
+  },
+  "options_language_tip": {
+    "message": "<strong>SUGERENCI:</strong> Selecciona solo los idiomas que necesitas. Seleccionar más ralentizará el bloqueador de anuncios y, por tanto, la velocidad de navegación."
+  },
+  "options_learn_more": {
+    "message": "Más información"
+  },
+  "options_more_filters_description": {
+    "message": "Estos son filtros adicionales que has añadido previamente a Adblock Plus."
+  },
+  "options_more_filters_note": {
+    "message": "<strong>Nota:</strong> Usa exclusivamente listas de filtros de terceros de autores en los que confíes."
+  },
+  "options_new_label": {
+    "message": "NUEVO"
+  },
+  "options_page_document_title": {
+    "message": "Configuración"
+  },
+  "options_page_title": {
+    "message": "Configuración"
+  },
+  "options_privacy_header": {
+    "message": "PRIVACIDAD Y SEGURIDAD"
+  },
+  "options_protection_privacy_tooltip": {
+    "message": "Protege tus datos personales mediante la eliminación de todas las formas de seguimiento en internet, incluidos los recopiladores de datos."
+  },
+  "options_protection_social_tooltip": {
+    "message": "Los iconos de medios sociales en las páginas web que visitas permiten que las redes de medios sociales construyan un perfil tuyo en base a tus hábitos de navegación, incluso cuando no haces clic en ellos. Ocultar estos iconos puede proteger tu perfil."
+  },
+  "options_report_bug": {
+    "message": "¿Encontraste un error? <a>Envíanos un informe de error</a>"
+  },
+  "options_report_forum": {
+    "message": "¿Deseas obtener ayuda de nuestra comunidad? <a>Accede al foro</a>"
+  },
+  "options_social_description": {
+    "message": "¿Tienes alguna pregunta o idea nueva? Estamos aquí para ayudarte."
+  },
+  "options_social_title": {
+    "message": "Ponerse en contacto"
+  },
+  "options_support_title": {
+    "message": "Soporte"
+  },
+  "options_tab_advanced": {
+    "message": "Avanzado"
+  },
+  "options_tab_general": {
+    "message": "General"
+  },
+  "options_tab_help": {
+    "message": "Ayuda"
+  },
+  "options_tracking_warning_1": {
+    "message": "Hemos detectado que tienes activadas las opciones <strong>$tracking$</strong> y <strong>$acceptableAds$</strong>.",
+    "placeholders": {
+      "acceptableAds": {
+        "content": "$2",
+        "example": "Allow Acceptable Ads"
+      },
+      "tracking": {
+        "content": "$1",
+        "example": "Block additional tracking"
+      }
+    }
+  },
+  "options_tracking_warning_3": {
+    "message": "Si prefieres privacidad extra, selecciona la casilla <strong>$acceptableAdsPrivacy$</strong> a continuación.",
+    "placeholders": {
+      "acceptableAdsPrivacy": {
+        "content": "$1",
+        "example": "Only allow ads without third-party tracking"
+      }
+    }
+  },
+  "options_tracking_warning_acknowledgment": {
+    "message": "Bien, entiendo"
+  },
+  "line": {
+    "message": "Línea $number$: $message$",
+    "placeholders": {
+      "message": {
+        "content": "$2",
+        "example": "Some error on this line"
+      },
+      "number": {
+        "content": "$1",
+        "example": "42"
+      }
+    }
+  },
+  "continue": {
+    "message": "Continuar"
+  },
+  "filters_subscription_lastDownload_connectionError": {
+    "message": "Falló, error en la descarga"
+  },
+  "issueReporter_anonymousSubmission_label": {
+    "message": "Envío anónimo"
+  },
+  "issueReporter_anonymousSubmission_warning": {
+    "message": "No podremos contactarte y tu informe seguramente tendrá poca prioridad."
+  },
+  "issueReporter_commentPage_heading": {
+    "message": "Ingresar comentarios"
+  },
+  "issueReporter_comment_description": {
+    "message": "El campo de texto, debajo, te permite ingresar algún comentario para ayudarnos a entender el problema. Este paso es opcional, pero encarecidamente recomendado si el problema no resulta tan obvio. También podés revisar los datos del informe antes de enviarlo."
+  },
+  "issueReporter_comment_label": {
+    "message": "Comentarios (opcional):"
+  },
+  "issueReporter_confirmationMessage": {
+    "message": "Tu informe se guardó exitosamente. Podés acceder al mismo desde esta dirección:"
+  },
+  "issueReporter_data_gathering_tab": {
+    "message": "<strong>Nota:</strong> Una pestaña adicional va a abrirse por un rato para que el generador de informes de problemas no afecte a la página en la que te encuentras actualmente."
+  },
+  "issueReporter_doneButton_label": {
+    "message": "Listo"
+  },
+  "issueReporter_email_description": {
+    "message": "Te alentamos a que ingresés una dirección válida de correo electrónico, así podemos contactarte si tenemos dudas sobre tu informe. También nos permitirá reconocer tus contribuciones y priorizarlas por sobre el resto."
+  },
+  "issueReporter_email_label": {
+    "message": "Dirección de correo electrónico:"
+  },
+  "issueReporter_errorMessage": {
+    "message": "Se intentó enviar el reporte, pero falló y devolvió un error de código \"?1?\". Por favor, asegurate que estás conectado a Internet e intentá nuevamente. Si el problema persiste, por favor, pedí ayuda en el [link]foro de Adblock Plus[/link]."
+  },
+  "issueReporter_falseNegative_description": {
+    "message": "Seleccioná esta opción si una publicidad es mostrada, estando Adblock Plus habilitado."
+  },
+  "issueReporter_falseNegative_label": {
+    "message": "Adblock Plus no bloquea una publicidad"
+  },
+  "issueReporter_falsePositive_description": {
+    "message": "Seleccioná esta opción si falta contenido importante, si la página se visualiza incorrectamente o si no funciona apropiadamente. Podés determinar si Adblock Plus es el causante del problema, deshabilitándolo temporalmente."
+  },
+  "issueReporter_falsePositive_label": {
+    "message": "Adblock Plus bloquea demasiado"
+  },
+  "issueReporter_knownIssueMessage": {
+    "message": "El problema que enviaste probablemente es un inconveniente ya informado. Más información:"
+  },
+  "issueReporter_page_title": {
+    "message": "Informe de problemas"
+  },
+  "issueReporter_privacyPolicy": {
+    "message": "Política de privacidad"
+  },
+  "issueReporter_sendButton_label": {
+    "message": "Enviar informe"
+  },
+  "issueReporter_sendPage_heading": {
+    "message": "Enviar informe"
+  },
+  "issueReporter_sending": {
+    "message": "Por favor, esperá mientras Adblock Plus envía tu informe."
+  },
+  "issueReporter_showData_label": {
+    "message": "Mostrar datos del informe"
+  },
+  "issueReporter_typeSelector_description": {
+    "message": "Esta ventana te va a guiar a través de los pasos necesarios para el envío de informes de problemas de Adblock Plus. Por favor, primero elegí el tipo de problema que estás experimentando en esta página web:"
+  },
+  "issueReporter_typeSelector_heading": {
+    "message": "Seleccioná el tipo de problema"
+  },
+  "name_devbuild": {
+    "message": "Versión de desarrollo de Adblock Plus"
+  },
+  "mops_acceptableAds_description": {
+    "message": "Permitir publicidad no hostigadora"
+  },
+  "mops_acceptableAds_more": {
+    "message": "Más información"
+  },
+  "mops_action_cancel": {
+    "message": "Cancelar"
+  },
+  "mops_enabled_label": {
+    "message": "Bloquear anuncios en:"
+  },
+  "mops_filterlist_add": {
+    "message": "Agregar una lista de filtros"
+  },
+  "mops_filterlist_add_action": {
+    "message": "AGREGAR LISTA DE FILTROS"
+  },
+  "mops_filterlist_add_url": {
+    "message": "Agregar una lista de filtros personalizada"
+  },
+  "mops_header": {
+    "message": "Adblock Plus Ajustes"
+  },
+  "mops_subscribe_header": {
+    "message": "Agregar una lista de filtros personalizada"
+  },
+  "mops_subscribe_title": {
+    "message": "Nombre de la lista de filtros"
+  },
+  "mops_subscribe_url": {
+    "message": "Dirección URL de la lista de filtros"
+  },
+  "mops_subscriptions_header": {
+    "message": "Suscripciones de Filtro"
+  },
+  "mops_title": {
+    "message": "Adblock Plus Ajustes"
+  },
+  "notification_configure": {
+    "message": "Configura opciones de notificación"
+  },
+  "notification_open_all": {
+    "message": "Abrir todos los enlaces de esta notificación"
+  },
+  "notification_without_buttons": {
+    "message": "Haz click en la notificación para abrir todos los enlaces en él."
+  },
+  "easy_create_filter": {
+    "message": "Bloquear Elemento"
+  },
+  "options_short": {
+    "message": "Opciones"
+  },
+  "overlay_notification_closing_button_optout": {
+    "message": "Dejar de mostrar avisos"
+  },
+  "stats_label_page": {
+    "message": "en esta página"
+  },
+  "stats_label_total": {
+    "message": "en total"
+  },
+  "user_account_login": {
+    "message": "Iniciar sesión"
+  },
+  "user_account_manage_account": {
+    "message": "Mi cuenta"
+  }
+}
