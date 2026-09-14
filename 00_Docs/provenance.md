@@ -6,7 +6,7 @@ Tracking Mechanisms"* (ACSAC 2026) was collected, where, and when.
 
 ## Collection Period
 
-The crawl was conducted in <CRAWL_START> -- <CRAWL_END> (all four
+The crawl was conducted in May (all four
 measurement profiles ran simultaneously).
 
 ## Site Selection
