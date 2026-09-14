@@ -19,3 +19,5 @@ Code/Preprocessing/EasyList_Classification/output/*
 dump/*
 
 04_Page_Breakage/datadir/*
+
+replacements.txt
