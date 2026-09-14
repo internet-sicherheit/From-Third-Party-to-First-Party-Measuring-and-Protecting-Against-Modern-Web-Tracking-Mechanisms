@@ -1,0 +1,69 @@
+{
+  "add": {
+    "message": "ጨምር"
+  },
+  "cancel": {
+    "message": "ይቅር"
+  },
+  "block_element": {
+    "message": "ይሄንን አካል ከልክል"
+  },
+  "options_customFilter_cancel": {
+    "message": "ይቅር"
+  },
+  "options_filterList_column_name": {
+    "message": "የማጣሪያ ዝርዝር"
+  },
+  "options_filterList_title": {
+    "message": "የማጣሪያ ዝርዝር"
+  },
+  "options_filterList_updateNow": {
+    "message": "ማሻሻያ አሁን አርግ"
+  },
+  "options_tab_general": {
+    "message": "አጠቃላይ"
+  },
+  "line": {
+    "message": "መስመር $number$: $message$",
+    "placeholders": {
+      "message": {
+        "content": "$2",
+        "example": "Some error on this line"
+      },
+      "number": {
+        "content": "$1",
+        "example": "42"
+      }
+    }
+  },
+  "continue": {
+    "message": "ቀጥል"
+  },
+  "name_devbuild": {
+    "message": "አድብሎክ ፕላስ በስሪት ላይ ያለ"
+  },
+  "mops_action_cancel": {
+    "message": "ይቅር"
+  },
+  "notification_configure": {
+    "message": "የማስታወሻ ምርጫዎትን ይለውጡ"
+  },
+  "notification_open_all": {
+    "message": "በዚህ ማስታወሻ ውስጥ ያሉ አገናኞች ሁሉ ይክፈቱ"
+  },
+  "notification_without_buttons": {
+    "message": "በውስጡ ያሉ አገናኞች ሁሉ ለመክፈት ማስታወሻውን ይጫኑት።"
+  },
+  "easy_create_filter": {
+    "message": "ይህን አካል ይከልክሉ"
+  },
+  "options_short": {
+    "message": "ምርጫዎች"
+  },
+  "stats_label_page": {
+    "message": "በዚህ ገጽ ላይ"
+  },
+  "stats_label_total": {
+    "message": "ባጠቃላይ"
+  }
+}
