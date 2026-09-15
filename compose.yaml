@@ -1,18 +1,29 @@
+# All four services share one image (acsac26-fpt-artifact). Without an explicit
+# image: name, Compose derives a separate name per service, so "docker compose
+# build base" would leave the claim services on stale images and the artifact
+# would occupy four copies of the same 1.5 GB layer stack.
+x-artifact: &artifact
+  build: .
+  image: acsac26-fpt-artifact:latest
+  volumes:
+    # Bulk dataset: bind-mounted rather than baked in, and read-only so a claim
+    # script can never modify its own input.
+    - ./02_Data:/artifact/02_Data:ro
+    # Claim outputs land here on the host for inspection.
+    - ./out:/artifact/out
+
 services:
-  base: &base
-    build: .
-    volumes:
-      - ./02_Data:/artifact/02_Data:ro
-      - ./out:/artifact/out
+  base:
+    <<: *artifact
 
   claim1:
-    <<: *base
+    <<: *artifact
     command: ["claims/claim1_heuristic.sh"]
 
   claim2:
-    <<: *base
+    <<: *artifact
     command: ["claims/claim2_cluster.sh"]
 
   claim3:
-    <<: *base
+    <<: *artifact
     command: ["claims/claim3_rules.sh"]
