@@ -1,169 +1,234 @@
-import os
-import pandas as pd
-import logging
-import sys
+"""
+SimHash clustering of the JavaScript corpus (paper Section 5, Claim 2).
+
+Reads 64-bit SimHash fingerprints of the collected JavaScript files and groups
+them into clusters of near-duplicates using a Hamming-distance threshold
+(k=8 in the paper). Clusters are the unit of the entity-attribution step
+implemented in attribute_scripts.py.
+
+Output format: one Python-dict literal per line, e.g.
+
+    {'cluster_size': 2, 'cluster_1': '0317b25b1df34d7f', 'cluster_2': '...'}
+
+Determinism: cluster membership comes out of a set, whose iteration order is
+not stable across interpreter runs (PYTHONHASHSEED). Members within a cluster
+and the clusters themselves are therefore sorted before writing, so repeated
+runs produce byte-identical output. This changes only the ordering of the
+output file, never the clustering itself.
+
+Example:
+
+  python Code/Analysis/ecosystem/ecosystem_analysis_pipeline.py \
+    --input 02_Data/ecosystem/simhashes_24112025.csv \
+    --k 8 --output out/clusters_k8.txt
+"""
+
+import argparse
 import csv
-import ndjson
-from tqdm import tqdm
+import logging
+import os
+import sys
+from collections import Counter
 from glob import glob
-from simhash2_optimized import Simhash, SimhashIndex, build_simhash_clusters
-#from simhash2 import Simhash, SimhashIndex
+
+import pandas as pd
+from tqdm import tqdm
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from simhash2_optimized import Simhash, SimhashIndex, build_simhash_clusters  # noqa: E402
 
 tqdm.pandas()
 
-# ------------------------------ logging --------------------------------
-def setup_logging() -> logging.Logger:
-    logger = logging.getLogger("batch_simhash_pipeline")
+REPO_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..')
+)
+
+DEFAULT_INPUT = os.path.join('02_Data', 'ecosystem', 'simhashes_24112025.csv')
+DEFAULT_OUTPUT = os.path.join('out', 'clusters_k8.txt')
+DEFAULT_BENCHMARKS = os.path.join('02_Data', 'ecosystem', 'benchmark_files', 'benchmarks.csv')
+
+HASH_COLUMN = 'simhash_hex'
+
+logger = logging.getLogger("ecosystem_analysis_pipeline")
+
+
+def setup_logging(log_file: str) -> None:
     logger.setLevel(logging.INFO)
     logger.propagate = False
     fmt = logging.Formatter('%(asctime)s %(levelname)-7s %(funcName)-28s %(message)s')
-    fh = logging.FileHandler("batch_simhash_pipeline.log")
-    fh.setLevel(logging.INFO)
-    fh.setFormatter(fmt)
+    if log_file:
+        fh = logging.FileHandler(log_file)
+        fh.setLevel(logging.INFO)
+        fh.setFormatter(fmt)
+        logger.addHandler(fh)
     sh = logging.StreamHandler(sys.stdout)
     sh.setLevel(logging.ERROR)
     sh.setFormatter(fmt)
-    if not logger.handlers:
-        logger.addHandler(fh)
-        logger.addHandler(sh)
-    return logger
+    logger.addHandler(sh)
 
-logger = setup_logging()
 
-# ----------------------------- paths ------------------------------
-BASE_DATA          = os.path.join(os.getcwd(), '..', '..', '..', '02_Data')
-ECOSYSTEM_DATA     = os.path.join(BASE_DATA, 'ecosystem')
-INPUT_FILE         = glob(os.path.join(ECOSYSTEM_DATA, '*.csv'))
+def resolve(path: str) -> str:
+    """Interpret relative paths against the repository root."""
+    return path if os.path.isabs(path) else os.path.join(REPO_ROOT, path)
 
-BENCHMARK_FILE    = os.path.join(ECOSYSTEM_DATA, 'benchmark_files', "benchmarks.csv")  # optional
 
-BENCHMARK_DATASET = {}
-with open(BENCHMARK_FILE, mode='r', encoding='utf-8') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        BENCHMARK_DATASET[row['script_name']] = row['script']
-if len(BENCHMARK_DATASET) > 0:
-    logger.info("Built benchmark set for %d hashes", len(BENCHMARK_DATASET))
-# ----------------------------- helper ------------------------------
-def read_file(file:str) -> dict:
+def load_benchmarks(path: str) -> dict:
     """
-    Read a file and return it as a dict
-    :param file: file in csv format
-    :return: data as dict
-    """
-    # Read csv
-    df = pd.read_csv(file)
-    return df.to_dict(orient='records')
+    Load the optional benchmark fingerprint set.
 
-def getBenchmarks(benchmark_data=BENCHMARK_DATASET):
+    Benchmarks are reference scripts inserted into the index as controls. They
+    are entirely optional: the paper's clustering run did not use them (the
+    index is built with benchmarks=[]). Loading therefore never fails hard, and
+    in particular never runs at import time.
     """
-    Convert the global BENCHMARK_DATASET dict into a list of
-    (benchmark_url_string, Simhash_instance). Returns an empty list
-    if no benchmarks are provided.
-    """
-    benchmarks = []
-    for bu, bh in BENCHMARK_DATASET.items():
-        benchmarks.append((str(bu), Simhash(bh)))
+    benchmarks = {}
+    if not path or not os.path.exists(path):
+        logger.info("No benchmark file at %s - continuing without benchmarks.", path)
+        return benchmarks
+    try:
+        with open(path, mode='r', encoding='utf-8') as f:
+            for row in csv.DictReader(f):
+                benchmarks[row['script_name']] = row['script']
+        logger.info("Built benchmark set for %d hashes", len(benchmarks))
+    except (OSError, KeyError) as exc:
+        logger.warning("Could not read benchmarks from %s (%s) - continuing without.", path, exc)
+        return {}
     return benchmarks
 
-def process_data() -> list:
-    data = list()
 
-    def convert_simhash_obj(simhash) -> Simhash:
-        return Simhash(simhash)
+def list_input_files(input_path: str) -> list:
+    """Accept either a single CSV or a directory of CSVs."""
+    if os.path.isdir(input_path):
+        return sorted(glob(os.path.join(input_path, '*.csv')))
+    return [input_path]
 
-    # Load data from files
-    for file in tqdm(INPUT_FILE, total=len(INPUT_FILE), desc="Processing files"):
-        data.extend(read_file(file))
 
-    # Build df from records
-    df = pd.DataFrame.from_records(data)
+def process_data(input_files: list) -> list:
+    """Load fingerprints and return a list of (obj_id, Simhash) tuples."""
+    records = []
+    for file in tqdm(input_files, total=len(input_files), desc="Processing files"):
+        records.extend(pd.read_csv(file).to_dict(orient='records'))
 
-    df['simhash_obj'] = df['simhash_hex'].progress_apply(convert_simhash_obj)
+    df = pd.DataFrame.from_records(records)
+    if HASH_COLUMN not in df.columns:
+        raise ValueError(
+            f"Input is missing the '{HASH_COLUMN}' column. "
+            f"Found columns: {', '.join(df.columns)}"
+        )
 
-    objs = list(df.itertuples(index=False, name=None))
+    df['simhash_obj'] = df[HASH_COLUMN].progress_apply(Simhash)
+    return list(df[[HASH_COLUMN, 'simhash_obj']].itertuples(index=False, name=None))
 
-    return objs
 
-def main():
-    objs = process_data()
+def write_clusters(clusters: list, output_file: str) -> None:
+    """
+    Write clusters in the historical dict-literal format, sorted for
+    determinism (members within a cluster, then clusters themselves).
+    """
+    lines = []
+    for cluster in clusters:
+        members = sorted(cluster)
+        d = {'cluster_size': len(members)}
+        for j, member in enumerate(members, 1):
+            d[f'cluster_{j}'] = member
+        lines.append(str(d))
 
-    benchmarks_list = [(k, Simhash(v)) for k, v in BENCHMARK_DATASET.items()]
+    lines.sort()
+    os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as f:
+        for line in lines:
+            f.write(line + '\n')
 
-    index = SimhashIndex(objs, f=64, k=8, benchmarks=[])
+
+def parse_args(argv=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Cluster JavaScript SimHash fingerprints (paper Claim 2)."
+    )
+    parser.add_argument(
+        '--input', default=DEFAULT_INPUT,
+        help=f"Fingerprint CSV or directory of CSVs (default: {DEFAULT_INPUT})."
+    )
+    parser.add_argument(
+        '--output', default=DEFAULT_OUTPUT,
+        help=f"Output cluster file (default: {DEFAULT_OUTPUT})."
+    )
+    parser.add_argument(
+        '--k', type=int, default=8,
+        help="Hamming distance tolerance (default: 8, the paper configuration)."
+    )
+    parser.add_argument(
+        '--f', type=int, default=64,
+        help="Fingerprint bit width (default: 64, the paper configuration)."
+    )
+    parser.add_argument(
+        '--benchmarks', default=DEFAULT_BENCHMARKS,
+        help="Optional benchmark CSV. Silently skipped when absent "
+             "(the paper's run used no benchmarks)."
+    )
+    parser.add_argument(
+        '--use-benchmarks', action='store_true',
+        help="Insert benchmark fingerprints into the index. Off by default to "
+             "match the published clustering."
+    )
+    parser.add_argument(
+        '--log-file', default=None,
+        help="Log file path (default: <output>.log)."
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None) -> int:
+    args = parse_args(argv)
+
+    input_path = resolve(args.input)
+    output_file = resolve(args.output)
+    log_file = resolve(args.log_file) if args.log_file else output_file + '.log'
+
+    os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
+    setup_logging(log_file)
+
+    if not os.path.exists(input_path):
+        print(
+            f"ERROR: fingerprint input not found: {input_path}\n"
+            "The frozen dataset does not appear to be present. "
+            "Run ./install.sh first (see README, section 'Installation').",
+            file=sys.stderr
+        )
+        return 2
+
+    input_files = list_input_files(input_path)
+    if not input_files:
+        print(
+            f"ERROR: no CSV files found in {input_path}\n"
+            "Run ./install.sh first (see README, section 'Installation').",
+            file=sys.stderr
+        )
+        return 2
+
+    try:
+        objs = process_data(input_files)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+
+    benchmark_dataset = load_benchmarks(resolve(args.benchmarks)) if args.use_benchmarks else {}
+    benchmarks_list = [(k, Simhash(v)) for k, v in benchmark_dataset.items()]
+
+    print(f"Indexing {len(objs)} fingerprints (f={args.f}, k={args.k})...")
+    index = SimhashIndex(objs, f=args.f, k=args.k, benchmarks=benchmarks_list)
 
     clusters = build_simhash_clusters(index)
 
-    length_cluster = list()
+    sizes = [len(c) for c in clusters]
+    print(f"Clusters: {len(clusters)} | min size: {min(sizes)} | max size: {max(sizes)}")
+    print("Cluster size distribution (size: count):")
+    for size, count in sorted(Counter(sizes).items())[:10]:
+        print(f"  {size}: {count}")
 
-    # print("Cluster, Length, Elements")
-    for i, cluster in enumerate(clusters, 1):
-    #     print(i, len(cluster), cluster)
-        length_cluster.append(len(cluster))
-
-    print("min:", min(length_cluster), "max:", max(length_cluster))
-
-    from collections import Counter
-
-    print("Skript - Occurency")
-    for k, v in sorted(Counter(length_cluster).items()):
-        print(k, v)
-
-    output = list()
-    for i, cluster in enumerate(clusters, 1):
-        cluster = list(cluster)
-        d = {'cluster_size': len(cluster)}
-        for j, c in enumerate(cluster, 1):
-            d[f'cluster_{j}'] = c
-        output.append(d)
-
-    with open("cluster_27112025_k8.txt", 'w') as f:
-        for l in output:
-            f.write(str(l))
-            f.write('\n')
-
-
-
-
-    # with open("cluster_24112025.txt", 'w') as f:
-    #     for i, cluster in enumerate(clusters, 1):
-    #         cluster = list(cluster)
-    #         cluster_1 = cluster[0]
-    #         try:
-    #             cluster_2 = cluster[1]
-    #         except IndexError:
-    #             cluster_2 = ''
-    #         try:
-    #             cluster_3 = cluster[2]
-    #         except IndexError:
-    #             cluster_3 = ''
-            # try:
-            #     cluster_4 = cluster[3]
-            # except IndexError:
-            #     cluster_4 = ''
-            # try:
-            #     cluster_5 = cluster[4]
-            # except IndexError:
-            #     cluster_5 = ''
-            # try:
-            #     cluster_6 = cluster[5]
-            # except IndexError:
-            #     cluster_6 = ''
-            # try:
-            #     cluster_7 = cluster[6]
-            # except IndexError:
-            #     cluster_7 = ''
-            # line = "{'cluster_size':" + str(len(cluster))
-            # line += f", 'cluster_{1}': '{cluster_1}'"
-            # line += f", 'cluster_{2}': '{cluster_2}'"
-            # line += f", 'cluster_{3}': '{cluster_3}'"
-            # line += f", 'cluster_{4}': '{cluster_4}'"
-            # line += f", 'cluster_{5}': '{cluster_5}'"
-            # line += f", 'cluster_{6}': '{cluster_6}'"
-            # line += f", 'cluster_{7}': '{cluster_7}'"
-            # line +=  "}\n"
-            # f.write(line)
+    write_clusters(clusters, output_file)
+    print(f"Wrote {len(clusters)} clusters to {output_file}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
