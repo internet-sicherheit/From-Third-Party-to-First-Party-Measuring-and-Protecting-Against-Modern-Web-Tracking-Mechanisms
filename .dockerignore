@@ -1,0 +1,26 @@
+# The build context must stay small. 02_Data holds up to ~142 GB locally and
+# is bind-mounted into the container at run time (see compose.yaml), so it must
+# never be copied into the image.
+02_Data/
+
+.git/
+.idea/
+out/
+
+# Crawl infrastructure: not needed to evaluate the claims, and it carries a
+# bundled Firefox plus extension node_modules (~3.3 GB combined).
+01_MultiCrawl/firefox-bin/
+01_MultiCrawl/drivers/
+01_MultiCrawl/Extension/node_modules/
+01_MultiCrawl/extracted_csvs/
+04_Page_Breakage/firefox-bin/
+04_Page_Breakage/Extension/node_modules/
+04_Page_Breakage/datadir/
+04_Page_Breakage/__pycache__/
+
+# Browser extension payloads and the Tranco list (~194 MB)
+05_Resources/extension/
+
+**/__pycache__/
+**/*.pyc
+**/*.log

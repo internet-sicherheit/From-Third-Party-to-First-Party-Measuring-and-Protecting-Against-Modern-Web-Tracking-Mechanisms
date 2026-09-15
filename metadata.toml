@@ -50,31 +50,35 @@ cookies, and scripts observed reflect the collection period documented
 in docs/provenance.md and will differ from current web state. The
 dataset contains no personal data of end users; crawls were performed
 with fresh, stateless browser profiles.
+
+Column schemas for every file the claim scripts read or write are
+documented in docs/schema.md.
 """
 destructive = "None. The artifact operates offline on the included frozen dataset. All writes are confined to the container / a mounted output volume. No live web requests, no scanning, no modification of the host system outside the working directory."
-claim1 = "Applying the four-criterion FPT cookie heuristic (C1: lifetime > 90 days, C2: length >= 8 bytes, C3: uniqueness, C4: Ratcliff/Obershelp similarity <= 0.6) to the frozen crawl dataset (~25k sites) reproduces the first-party tracking cookie counts and prevalence figures reported in Section 4 / Table <X> of the paper."
+claim1 = "Applying the Python half of the four-criterion FPT cookie heuristic (C3: uniqueness, operationalized as relative value-length difference <= 0.25 across crawl profiles; C4: Ratcliff/Obershelp similarity <= 0.6) to the frozen candidate shards reproduces the published hold_id classification for those shards exactly and deterministically. C1 (lifetime > 90 days) and C2 (value length >= 8 bytes) are applied in the upstream SQL stage and ship pre-materialized in the dataset as the columns valid_expires_date and valid_entropy. NOTE: this claim covers the heuristic implementation, not the paper's Section 4 aggregate counts -- see 'Scope of reproduction' in the README."
 script1 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim1_heuristic.sh"
-expected1 = "The script outputs per-criterion and total FPT cookie counts matching Table <X> exactly (deterministic computation on frozen data); see claims/expected/claim1_output.txt for the reference output."
-claim2 = "SimHash-based clustering of the JavaScript corpus (64-bit fingerprints, Hamming distance k=8) followed by entity attribution reproduces the 860 clusters and the top-entity attribution reported in Table 5, including the documented edge cases (PHPSESSID, AWSALB)."
-script2 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim2_clustering.sh"
-expected2 = "860 clusters and cluster-to-entity mapping identical to Table 5 (deterministic given fixed fingerprints); reference output in claims/expected/claim2_output.txt."
-claim3 = "The rule-generation component derives the 181 filter-list rules published with the paper (Section 5.5) from the detected FPT/SST endpoints; session-management cookies are excluded from rule generation."
+expected1 = "Byte-identical match against claims/expected/claim1_reference.csv (12,979 (cookie_name, eTLD) pairs over the first two shards; 1,381 classified hold_id=True, spanning 631 distinct cookie names). Runtime under one minute."
+claim2 = "SimHash-based clustering of the JavaScript corpus (64-bit fingerprints, Hamming distance k=8) reproduces the published clustering of the 26,605 frozen fingerprints into 24,914 clusters, and entity attribution against the pinned WhoTracksMe TrackerDB reproduces the published per-cluster organization shares for 11,380 clusters. NOTE: the 860-cluster figure in the paper comes from a downstream BigQuery join against the cookie and script tables, which requires the authors' private BigQuery project and is not part of this artifact."
+script2 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim2_cluster.sh"
+expected2 = "Byte-identical match against claims/expected/cluster_reference_k8.txt (24,914 clusters) and claims/expected/attribution_reference.csv (11,380 clusters; 1,038 of 16,114 scripts attributed to 177 distinct organizations). Runtime approx. 15 minutes, dominated by TrackerDB lookups; set SKIP_ATTRIBUTION=1 to run stage 1 only (approx. 1 minute)."
+claim3 = "The rule-generation component derives the 181 filter-list rules published with the paper (Section 5.5) from the frozen FP-Growth itemset table, using the published configuration (minimum lift ratio 10, at most 3 query keys per rule)."
 script3 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim3_rules.sh"
-expected3 = "Output file rules.txt contains 181 rules, byte-identical to claims/expected/rules_reference.txt."
+expected3 = "Output file out/rules_generated.txt contains 181 rules, byte-identical to claims/expected/rules_181.txt. Runs offline from files tracked in Git, in a few seconds."
 hw = """
 x86-64 Linux host
->= 8 CPU cores recommended (pipeline parallelizes; runs on 4 cores with longer runtime)
->= 32 GB RAM
->= <SIZE> GB free disk (frozen dataset + intermediate outputs)
+>= 4 CPU cores
+>= 8 GB RAM for Claims 2 and 3; >= 16 GB for the scaled-down Claim 1 run
+>= <SIZE> GB free disk (only needed for Claim 1, which requires the Zenodo dataset;
+  Claims 2 and 3 run from the ~200 MB Git clone alone)
 No GPU required
-Expected total runtime for all claim scripts: approx. <N> hours
+Expected total runtime for all three claim scripts: approx. 20 minutes
 """
 sw = """
 Docker >= 24 (or compatible container runtime)
 Linux host recommended; tested on Ubuntu 22.04 / WSL2
 All other dependencies are contained in the provided Docker image
 """
-api = "North Data"
+api = "None at run time. Entity attribution uses the WhoTracksMe tracker database (@ghostery/trackerdb 1.0.683), vendored into the repository and queried offline. The original data collection additionally used the Cookiepedia service for cookie classification; its results ship as frozen CSVs and are not re-fetched."
 gui = "n"
 provenance = "https://github.com/internet-sicherheit/<REPO>/blob/main/docs/provenance.md"
 ethics = "https://github.com/internet-sicherheit/<REPO>/blob/main/docs/ethics.md"

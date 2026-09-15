@@ -1,243 +1,286 @@
 # From Third-Party to First-Party: Measuring and Protecting Against Modern Web Tracking Mechanisms
-This repository includes the documentation for collecting, preprocessing, and analyzing the data used in the submitted paper. Please note that at this point, we do not make the dataset publicly available. Regarding the missing method for hosting 1.3 TB of fully anonymized data, we were unable to apply it. After the paper is accepted, we will provide the data at the following link: [dataset].
 
-## Repository Structure
-- **01_MultiCrawl (Framework)** contains the framework necessary to conduct the large-scale measurement presented in the paper. It can be utilized for extensive Web measurements, including crawling multiple websites simultaneously with various browser configurations (e.g., different user agents, extensions, etc.).
-- **02_Data'** hosts a subset of the collected and preprocessed measurement data. Please note that we are not able to provide the data in a fully anonymous form.
-- **Code** provides Jupyter Notebooks and scripts for generating plots and calculating statistics, as presented in our paper. 
-- **04_Page_Breakage** contains the framework necessary to conduct the page breakage analysis.
-- **05_Resources** contains all neseccary resources (e.g., easylists, adblock plus extension, tranco list)
-- **06_RuleSet_generation** contains the framework for pattern mining and filter rule generation from tracking URLs.
+Research artifact for the ACSAC 2026 paper of the same name.
 
-## Table of Contents
-- [Introduction](#Introduction)
-- [Installation](#Installation)
-- [Using BigQuery](#Using-BigQuery)
-- [Data Collection](#Data-Collection)
-  - [Technical Setup](#Technical-Setup)
-  - [Collectable Data](#Collectable-Data)
-  - [Disclaimer](#Disclaimer)
-  - [MultiCrawl](#MultiCrawl)
-  - [Getting Started](#getting-started)
-  - [Installation \& Configuration](#installation--configuration)
-  - [Running the Framework](#running-the-framework)
-  - [Acknowledgements](#acknowledgements)
-- [Preprocessing](#Preprocessing)
-  - [Cookiepedia](#Cookiepedia)
-  - [EasyList](#easylist)
-  -  [Clustering](#clustering)
-  - [Heuristic](#Heuristic)
-- [Pattern Mining](#Pattern-Mining)
-  - [Feature Extraction](#Feature-Extraction)
-  - [FP-Growth Pattern Mining](#FP-Growth-Pattern-Mining)
-  - [Rule Generation](#Rule-Generation)
-  - [Rule Evaluation](#Rule-Evaluation)
-- [Analysis](#Analysis)
-  - [Overview](#overview)
-  - [Ecosystem](#ecosystem)
-  - [Disclaimer](#disclaimer-1)
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the claims](#running-the-claims)
+- [Scope of reproduction](#scope-of-reproduction)
+- [Repository layout](#repository-layout)
+- [Pipeline details](#pipeline-details)
+- [Documentation](#documentation)
+- [License and citation](#license-and-citation)
 
-## Introduction
-The main purpose of this project is
-1. Collecting data with MultiCrawl
-2. Pushing the traffic to the database server (e.g., BigQuery, PostgreSQL)
-3. Analyse requests
-4. Build filter rules
-5. Perform page breakage analysis
+## Overview
+
+The paper studies how web tracking has moved from third-party to first-party
+contexts, and how that shift can be detected and blocked. The artifact packages
+the analysis pipeline behind three claims:
+
+| Claim | What it covers | Needs the Zenodo dataset? | Runtime |
+|---|---|---|---|
+| **1** | Four-criterion first-party tracking (FPT) cookie heuristic | yes | ~1 min |
+| **2** | SimHash clustering (64-bit, k=8) + entity attribution | no | ~15 min |
+| **3** | Generation of the 181 filter rules from Section 5.5 | no | ~5 s |
+
+Claims 2 and 3 run straight from a clone. Everything they read is tracked in
+Git. Only Claim 1 needs the bulk cookie shards, which are too large for a
+repository and are published separately.
+
+Each claim script regenerates its output and compares it **byte for byte**
+against a frozen reference in [`claims/expected/`](claims/expected/). There is
+no tolerance window: a claim passes only on an exact match.
+
+## Requirements
+
+- Docker >= 24 with the Compose plugin (tested on Docker 29 / Compose v5)
+- x86-64 Linux host recommended; also tested via WSL2
+- ~8 GB RAM and ~4 CPU cores for Claims 2 and 3
+- ~2 GB disk for the repository; additionally ~20 GB if you run Claim 1
+
+Everything else — Python 3.12, the pinned Python packages, and Node.js for the
+tracker-database lookups — is installed inside the image.
+
+Running outside Docker is possible (`pip install -r requirements.txt`, plus
+Node.js on `PATH`), but the container is the supported path.
 
 ## Installation
-```
-Git clone
-cd 
-pip install -r requirements.txt
-```
 
-## Using BigQuery
-For using BigQuery as a database, store the key as JSON under
-
-```
-/resources/google_bkp.json
+```bash
+git clone <this repository>
+cd From-Third-Party-to-First-Party-Measuring-and-Protecting-Against-Modern-Web-Tracking-Mechanisms
+./install.sh
 ```
 
-## Data Collection
-For the data collection, we use MultiCrawl. In [the folder](01_MultiCrawl), we provide the source code to use to reproduce our crawl. Please use the [README](01_MultiCrawl/README.md) in the folder to install MultiCrawl. For our measurement, we made some changes to the MultiCrawl implementation that you can find [here](technical_settings.md).
+`install.sh` builds the image, fetches the Claim 1 dataset if a Zenodo record
+is configured, and finishes by running Claim 3 as a smoke test.
 
-### Technical Setup
-To perform the measurement, we used four virtual machines. Each of them has at least:
-- 4 CPUs
-- 8 GB of RAM
-- 500GB storage
-- Ubuntu 20.04
-- Access to the internet
-- NordVPN installed and connected
+To skip the dataset and evaluate only the two self-contained claims:
 
-### Collectable Data
-- HTTP Traffic
-- Cookies
-- JavaScripts
-
-### Disclaimer
-Please note that our MultiCrawl approach does not store data in BigQuery. Instead, we store data on a filesystem. By capturing JavaScripts and all necessary data described in the paper, the crawl can store up to 500 GB of data. Further, a subscription to [NorthVPN](https://nordvpn.com/) is necessary to reproduce the original setup.
-
-### MultiCrawl
-MultiCrawl is a framework for running web measurements with different crawling setups across multiple machines, enabling near-real-time website crawling with browsers like Firefox and Chrome. MultiCrawl also automates interactions with consent banners on websites and recognizes tracking requests. All measurement data is pushed to BigQuery for analysis.
-
-**Supported Browsers**: Chrome, Firefox
-
-**Collectable Data Types**:
-- Cookies
-- LocalStorage
-- Requests
-- Responses
-- JavaScript calls
-
-#### Getting Started
-
-Before diving into the installation process, ensure you have the prerequisites ready:
-- PostgreSQL database
-- Authentication JSON for Google Cloud API
-- Sites to visit (e.g., Tranco list)
-- A VM (e.g., Ubuntu 20.04) setup
-
-#### Installation & Configuration
-
-1. Initialize your PostgreSQL database using the `/resources/posgres.sql` script.
-2. Update the PostgreSQL connection string in the `/DBOps.py` file.
-3. Save your Google Cloud API's `authentication JSON` as `google.json` in `/resources` ([Guide](https://cloud.google.com/docs/authentication/getting-started)).
-4. Import your list into the `sites` table of PostgreSQL.
-5. Use `/Commander_extract_Subpages.py` to extract subpages from your imported list.
-6. Prepare your BigQuery dataset with the tables `requests`, `responses`, `cookies`, and `localstorage`. For column definitions, refer to `resources/bigquery.md`.
-
-#### Running the Framework
-
-1. Set up an Ubuntu 20.04 VM.
-2. Install the required packages from `/req-pip.txt` and `/req-conda.txt`.
-3. Execute `install.sh` for OpenWPM installation.
-4. Configure a VPN connection on your VM (if needed).
-5. Name your VMs according to the `getMode()` function in `/setup.py`.
-6. Adjust the crawling preferences in the `getConfig()` function  in `/setup.py`
-7. Execute `restart.sh` on every VM to initiate the measurement.
-
-#### Acknowledgements
-
-This repository incorporates files from [OpenWPM](https://github.com/openwpm/OpenWPM), utilizing OpenWPM (v0.28) for Firefox operations.
-
-
-## Preprocessing
-We use different methods for preprocessing. For some preprocessing steps, a time span of up to 3 months is required. We provide the preprocessing code in the [folder](Code/Preprocessing).
-
-### Cookiepedia
-We classfy cookies using [Cookiepedia](https://cookiepedia.co.uk/), therefore we use a [script](Code/Preprocessing/cookie_classification/classify.py) that
-crawls (friendly) the Cookiepedia API.
-
-To run the script and modify the input CSV in the source code.
-```
-python classify.py
-```
-After classifying the cookies, the database has to be updated. Therefore, run the following [script](Code/Queries/Preprocessing/cookie_table.sql) in the BigQuery console. The script also classifies the cookie values for the first two steps of the [heuristic](#heuristic).
-
-### EasyList
-We classify our URLs with EasyList and EasyPrivacy. Therefore, we use a [Rust script](Code/Preprocessing/EasyList_Classification/rust_approach), testing a URL against the rules of the filter lists. To run the Rust script, execute:
-```
-# Optimize build
-cargo run --release
-```
-After classifying the URLs, run the [script](Code/Queries/requests.sql) to update the BigQuery database. Also run
-the [query](Code/Queries/Preprocessing/request_table.sql) to update if a request is third- or first-party.
-
-### Clustering
-To build the cluster, we use a [script](Code/Preprocessing/JavaScript) based on Simhashes. Before we do this, we extract the Simhashes for each JavaScript directly from the raw measurement data. 
-```
-python js_cluster_buffer_optimized.py
-```
-Please note that running the script can take a long time and requires a machine with up to 120 GB of RAM for successful batchwise computation.
-
-### Heuristic
-To obtain the data for the heuristic, run the [query](Code/Queries/hold_id.sql) in the BigQuery console.
-We use a [script](Code/Heuristik) to perform the heuristic check. To get the data, we perform some queries
-directly in BigQuery.
-```
-# Run script for heuristic
-python cookie_heuristik_opti.py
-```
-Please note that running this script consumes a lot of time (~1 week) and needs a machine with up to 120GB RAM.
-
-## Pattern Mining
-We use FP-Growth pattern mining to identify frequent patterns in tracking URLs and generate filter rules. The framework is provided in the [06_RuleSet_generation](06_RuleSet_generation) folder.
-
-### Feature Extraction
-We extract query parameters and path segments from URLs to create binary features. The feature extraction is performed using the [script](06_RuleSet_generation/RuleSet_Mining/analyze_query_keys.py) that processes URLs and generates feature columns for the most frequent query keys.
-
-To extract features from your dataset:
-```
-python analyze_query_keys.py
+```bash
+./install.sh --no-dataset
 ```
 
-The script processes positive (tracking) and negative (non-tracking) URL datasets separately and generates feature CSV files with binary columns indicating the presence of specific query parameters.
+## Running the claims
 
-### FP-Growth Pattern Mining
-We use FP-Growth algorithm to mine frequent itemsets from tracking and non-tracking URLs separately. The [FP-Growth pipeline](06_RuleSet_generation/RuleSet_Mining/fpgrowth_pipeline.py) computes support metrics, lift ratios, and Fisher's exact test p-values for each itemset.
-
-To run the pattern mining pipeline:
-```
-python fpgrowth_pipeline.py
+```bash
+docker compose run --rm claim3    # ~5 seconds
+docker compose run --rm claim2    # ~15 minutes
+docker compose run --rm claim1    # ~1 minute, needs the dataset
 ```
 
-The pipeline generates CSV files with frequent itemsets and their statistical metrics. You can configure the minimum support threshold and maximum itemset depth in the script.
+Claim 2 spends most of its time on per-domain tracker-database lookups. To
+verify the clustering stage alone:
 
-### Rule Generation
-From the mined patterns, we generate compact regex rules using positive lookaheads. The [rule generator script](06_RuleSet_generation/RuleSet_Mining/rules_generator/create_rules.py) converts frequent itemsets into adblocker-compatible rules.
-
-To generate rules from mined patterns:
-```
-python create_rules.py --input <itemsets_csv> --output <rules_file> --min-lift <threshold> --max-params <max_params>
+```bash
+docker compose run --rm -e SKIP_ATTRIBUTION=1 claim2   # ~1 minute
 ```
 
-The script filters itemsets by lift ratio and generates regex rules that check for the presence of multiple query parameters in any order.
+Claim 1 defaults to two dataset shards. Raise the count with `SHARDS`, but note
+that the reference output covers the first two shards only, so any other value
+will report a mismatch by construction:
 
-### Rule Evaluation
-We evaluate the generated rules against EasyList and EasyPrivacy to measure coverage and distinct blocking capabilities. The [evaluation script](06_RuleSet_generation/Rules_evaluation/evaluate_blocking.py) compares blocking performance across different rule sets.
-
-To evaluate rules:
-```
-python evaluate_blocking.py
+```bash
+docker compose run --rm -e SHARDS=5 claim1
 ```
 
-The evaluation generates statistics on coverage percentages and distinct blocks for each rule set (EasyList, EasyPrivacy, and custom generated rules).
+Outputs are written to `out/`, which is mounted from the host.
 
-For running the complete workflow with different experimental configurations, use the [orchestration script](06_RuleSet_generation/RuleSet_Mining/run_experiments.py):
+Each script prints `CLAIM n PASS` or `CLAIM n FAIL` and exits non-zero on
+failure. If the dataset is missing, the script says so and points back at
+`install.sh` instead of raising a traceback.
+
+## Scope of reproduction
+
+We state plainly what this artifact does and does not establish.
+
+### Fully reproducible
+
+**Claim 3 — filter rule generation.** Every input is tracked in Git.
+`create_rules.py` derives 181 rules from the frozen FP-Growth itemset table
+using the published configuration (minimum lift ratio 10, at most 3 query keys
+per rule). The output is byte-identical to the rule set shipped with the paper.
+
+**Claim 2 — clustering and attribution.** Both stages reproduce their frozen
+references exactly, and the clustering is stable across interpreter runs.
+
+### Reproducible against frozen intermediates
+
+**Claim 1 — FPT cookie heuristic.** C1 (lifetime > 90 days) and C2 (value
+length >= 8 bytes) are applied in the upstream BigQuery stage and arrive in the
+dataset pre-materialized as the columns `valid_expires_date` and
+`valid_entropy`. The claim script re-runs the two criteria implemented in
+Python, C3 (uniqueness) and C4 (Ratcliff/Obershelp similarity <= 0.6).
+
+It verifies that the shipped implementation reproduces the classification we
+publish for the shipped shards. **It does not reproduce the paper's Section 4
+aggregate counts.** Those were computed over a different, larger export
+(`fp_cookies_holding_id_candidates_*.csv`), which survives in this repository
+only as its result,
+[`Code/Heuristik/cookies_holding_ids.csv`](Code/Heuristik/cookies_holding_ids.csv)
+(281,815 rows, 31,850 with `hold_id=True`). The heuristic groups cookie values
+per shard file, so its output depends on how rows are distributed across
+shards; re-running it on the shards published here disagrees with that frozen
+output on roughly 31% of the overlapping cookies.
+
+**Cluster-level paper figures.** Clustering yields 24,914 clusters over 26,605
+fingerprints. The cluster counts reported in the paper come from a downstream
+BigQuery join of the clustering against the cookie and script tables. That
+stage needs the authors' private BigQuery project and is not part of this
+artifact.
+
+### Available, not reproducible
+
+**Raw data collection.** The crawl used four VMs on VPN-based vantage points
+over several weeks and produced more than 3 TB. Re-running it yields different
+data: the web changes. The crawler is included in
+[`01_MultiCrawl/`](01_MultiCrawl/) so the collection method can be inspected,
+and the page-breakage harness in [`04_Page_Breakage/`](04_Page_Breakage/).
+
+**BigQuery preprocessing.** The SQL in [`Code/Queries/`](Code/Queries/)
+hardcodes a private project id (`server_side_tracking` dataset) and was run
+from the BigQuery console. It is included for auditability. The frozen CSV
+exports it produced are what the claim scripts consume; their schemas are in
+[`docs/schema.md`](docs/schema.md).
+
+### Known deviations
+
+- `analyzer()` in the cookie heuristic stops at the first failing value pair,
+  so when the C3 length check fails, C4 is never evaluated for that pair and
+  the secondary flag `similarity_ok` can read `True` regardless. `hold_id`, the
+  classification the paper uses, is unaffected: it requires both checks to pass
+  for every pair. The behaviour is documented inline and deliberately left
+  unchanged, because correcting it would invalidate the frozen references.
+- `06_RuleSet_Generation/Rules_evaluation/src/main.rs` (the adblock-engine
+  evaluation of the generated rules against EasyList/EasyPrivacy) ships without
+  a `Cargo.toml` and is not wired into any claim script.
+- `Code/Queries/Preprocessing/cookie_table.sql` is written in PostgreSQL
+  dialect and its `is_first_party_cookie` statement is truncated mid-expression.
+  It documents the intent of the C1/C2 stage rather than being executable.
+
+## Repository layout
+
 ```
-python run_experiments.py
+claims/                 Claim scripts and frozen reference outputs
+docs/                   Provenance, ethics, and file schemas
+metadata.toml           ACSAC artifact metadata
+Dockerfile              Evaluation image
+compose.yaml            Service per claim
+install.sh              Build + optional dataset download + smoke test
+requirements.txt        Pinned Python dependencies
+
+01_MultiCrawl/          MultiCrawl measurement framework (OpenWPM-based)
+02_Data/                Frozen dataset; bulk exports come from Zenodo
+04_Page_Breakage/       Page-breakage measurement harness
+05_Resources/           EasyList/EasyPrivacy, Tranco list, extensions
+06_RuleSet_Generation/  Feature extraction, FP-Growth mining, rule generation
+07_Evaluiation/         Extended cookie mapping table
+Code/
+  Heuristik/            FPT cookie heuristic (Claim 1)
+  Preprocessing/        Cookie classification, EasyList tagging, fingerprints
+  Analysis/             Clustering, attribution, figures (Claim 2)
+  Queries/              BigQuery SQL for the preprocessing and analysis stages
 ```
 
-## Analysis
-In the following, we provide an overview of our analysis.
-Please note that BQ credits and access to the non-public dataset are necessary to perform the analysis.
+Paths under `02_Data/` that exceed GitHub's limits are listed in
+[`.gitignore`](.gitignore) with their sizes; all of them are in the Zenodo
+record.
 
-### Overview
-To capture all data for our overview, run the [script](Code/Queries/measurement_dataset_overview.sql) in a BigQuery console.
-- [Overview JavaScript](Code/Queries/javascript.sql)
-- [Overview Cookies](Code/Queries/cookies.sql)
+## Pipeline details
 
-To generate the UpSet plot, we use a Jupyter notebook: [script](Code/Analysis/JavaScript/overview.ipynb). To get information on the sizes and number of JavaScript files per profile, run the [script](Code/Analysis/JavaScript/js_script_size.py) on each VM to collect the data.
+This section documents the full path from crawl to results. Only the parts
+described above are reproducible by reviewers.
 
-### Ecosystem
-To perform the analysis for the ecosystem, there are multiple scripts with queries to use:
-- **[cookie ecosystem](Code/Queries/cookie_ecosystem.sql)** performs all analysis from chapter *Usage of Server-Site Tracking Cookies* based on the
-cookies in different clusters
-- **[Ecosystem](Code/Queries/ecosystem_clustering_data.sql)** the script contains all statements for the ecosystem analysis.
-- **[Top Cluster](Code/Queries/top_cluster.sql)** contains all statements for the analysis of the top 10 clusters.
+### Data collection
 
-Besides BigQuery queries we have multiple Python scripts:
-- **[Overview](Code/Analysis/ecosystem/overview.ipynb)** contains the distribution function of cluster by size.
-- **[Pipeline](Code/Analysis/ecosystem/ecosystem_analysis_pipeline.py)** contains the pipeline to analyse and create the SimhashIndex clustering.
-- **[Attribution](Code/Analysis/ecosystem/attribute_scripts.py)** contains the attribution process with whotracksme data.
-- **[Top 10 Attribution](Code/Analysis/ecosystem/top_cluster/attribution.ipynb)** contains an overview of the attribution from the top clusters.
-- **[Network Graph Figure](Code/Analysis/ecosystem/network_graph/network_graph_paper.ipynb)** creates the figure from the paper based on the top 5 clusters
-- **[Network Graph Analysis](Code/Analysis/ecosystem/network_graph/graph_analysis.ipynb)** contains all analysis made for the complete graph
+[`01_MultiCrawl/`](01_MultiCrawl/) crawls many sites in parallel across browser
+configurations, drives consent banners, and records requests, responses,
+cookies, localStorage, and JavaScript calls. Setup instructions are in
+[`01_MultiCrawl/README.md`](01_MultiCrawl/README.md); the deltas we applied for
+this paper are in [`technical_settings.md`](technical_settings.md).
 
-### Disclaimer
-Some of the used data (.csv-files) are not included in the Github repository regarding the size of the files or the number
-of files that are needed. Hence we are not able to push them into a Github repository. We will provide access to those file
-after the paper get accepted.
+Database schemas:
+[`01_MultiCrawl/database_schema/postgres.sql`](01_MultiCrawl/database_schema/postgres.sql)
+(crawl-side) and
+[`01_MultiCrawl/database_schema/bigquery.md`](01_MultiCrawl/database_schema/bigquery.md)
+(analysis-side).
 
+Collection period, site sampling, and vantage points: [`docs/provenance.md`](docs/provenance.md).
+
+### Preprocessing
+
+- **Cookie classification** against Cookiepedia:
+  [`Code/Preprocessing/cookie_classification/classify.py`](Code/Preprocessing/cookie_classification/classify.py).
+  Results ship as frozen CSVs in the same directory; the service is not
+  re-queried.
+- **Filter-list tagging** of request URLs against EasyList and EasyPrivacy
+  (both version `202505191305`):
+  [`Code/Preprocessing/EasyList_Classification/ablock_check_f.py`](Code/Preprocessing/EasyList_Classification/ablock_check_f.py).
+- **JavaScript fingerprints**:
+  [`Code/Preprocessing/JavaScript/js_cluster_buffer_optimized.py`](Code/Preprocessing/JavaScript/js_cluster_buffer_optimized.py)
+  streams script bodies from the raw crawl database and emits SimHashes. This
+  needs PostgreSQL access; its frozen output,
+  `02_Data/ecosystem/simhashes_24112025.csv`, is what Claim 2 starts from.
+- **Cookie heuristic C1/C2**:
+  [`Code/Queries/Preprocessing/cookie_table.sql`](Code/Queries/Preprocessing/cookie_table.sql)
+  and [`Code/Queries/hold_id.sql`](Code/Queries/hold_id.sql).
+
+### Rule mining
+
+[`06_RuleSet_Generation/RuleSet_Mining/`](06_RuleSet_Generation/RuleSet_Mining/):
+`analyze_query_keys.py` turns URLs into binary query-key features,
+`fpgrowth_pipeline.py` mines frequent itemsets with support, lift, and Fisher's
+exact p-values, and `rules_generator/create_rules.py` converts the surviving
+itemsets into lookahead regex rules.
+
+The frozen itemset table (`fpg_outputs_max_depth__161/`) is what Claim 3 uses,
+so the feature-extraction and mining stages do not need to be re-run.
+`Rules_evaluation/evaluate_blocking.py` summarizes blocking coverage from a
+CSV of per-URL verdicts produced by the Rust adblock harness in
+`Rules_evaluation/src/`.
+
+### Analysis
+
+Clustering and attribution live in
+[`Code/Analysis/ecosystem/`](Code/Analysis/ecosystem/) and are covered by
+Claim 2. The notebooks alongside them reproduce the paper's figures from the
+frozen CSVs: `overview.ipynb` (cluster size distribution),
+`network_graph/network_graph_paper.ipynb` (top-5 cluster graph),
+`top_cluster/attribution.ipynb` (top-10 attribution), and
+[`Code/Analysis/JavaScript/overview.ipynb`](Code/Analysis/JavaScript/overview.ipynb)
+(UpSet plot). Notebooks depending on `02_Data/ecosystem/network_graph/` need
+that directory from Zenodo.
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [`docs/provenance.md`](docs/provenance.md) | Collection period, site sampling, infrastructure, dataset scale |
+| [`docs/ethics.md`](docs/ethics.md) | Ethical considerations and responsible-use statement |
+| [`docs/schema.md`](docs/schema.md) | Column schemas for every file the claim scripts touch |
+| [`claims/expected/README.md`](claims/expected/README.md) | Provenance of each frozen reference output |
+| [`metadata.toml`](metadata.toml) | ACSAC artifact metadata |
+
+## License and citation
+
+Licensed under the Apache License 2.0; see [`LICENSE`](LICENSE).
+
+`01_MultiCrawl/` and `04_Page_Breakage/` incorporate
+[OpenWPM](https://github.com/openwpm/OpenWPM) (v0.28) under its own license.
+`02_Data/whotracksme/` vendors
+[`@ghostery/trackerdb`](https://github.com/ghostery/trackerdb) 1.0.683, pinned
+because its contents determine the attribution results.
+
+```bibtex
+@inproceedings{boettger.2026.acsac,
+  author    = {B\"{o}ttger, Christian and Khouja, Tareq and Pohlmann, Norbert
+               and Demir, Nurullah and Urban, Tobias},
+  title     = {From Third-Party to First-Party: Measuring and Protecting
+               Against Modern Web Tracking Mechanisms},
+  booktitle = {Proceedings of the 42nd Annual Computer Security Applications
+               Conference (ACSAC)},
+  year      = {2026},
+  note      = {To appear}
+}
+```
