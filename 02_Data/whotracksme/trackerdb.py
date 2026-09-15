@@ -12,12 +12,12 @@ class TrackerDB:
             [self.node, str(self.script_path), json.dumps(payload)],
             capture_output=True,
             text=True,
-            encoding="utf-8",      # <<< wichtig: UTF-8 explizit
-            errors="replace",      # oder "ignore", um harte Crashes zu vermeiden
+            encoding="utf-8",      # important: force UTF-8 explicitly
+            errors="replace",      # or "ignore", to avoid hard crashes
         )
 
         if proc.returncode != 0:
-            # Hier siehst du dann ggf. Node-Fehler, wenn etwas anderes schiefläuft
+            # Surfaces the underlying Node error when something else goes wrong
             raise RuntimeError(f"Node error (exit {proc.returncode}):\n{proc.stderr}")
 
         if not proc.stdout:
