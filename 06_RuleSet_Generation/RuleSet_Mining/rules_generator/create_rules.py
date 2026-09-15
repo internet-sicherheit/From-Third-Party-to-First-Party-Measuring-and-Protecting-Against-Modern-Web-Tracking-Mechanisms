@@ -175,7 +175,10 @@ def main() -> None:
             deduped.append(r)
     rules = deduped
 
-    out_path.write_text("\n".join(rules) + ("\n" if rules else ""), encoding="utf-8")
+    # newline="\n" so the rule file is byte-identical regardless of host OS;
+    # the claim script compares it byte for byte against the frozen reference.
+    with out_path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write("\n".join(rules) + ("\n" if rules else ""))
 
     print(f"Itemsets scanned:            {total_patterns:,}")
     print(f"Itemsets kept (lift >= {args.min_lift}): {kept_patterns:,}")

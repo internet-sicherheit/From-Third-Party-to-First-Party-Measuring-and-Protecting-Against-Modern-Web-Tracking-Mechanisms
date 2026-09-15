@@ -82,8 +82,11 @@ def append_checkpoint(path: str, filename: str):
 
 
 def append_results(df: pd.DataFrame, outfile: str):
+    # lineterminator='\n' so the output is byte-identical regardless of host
+    # OS; the claim script compares it byte for byte against the reference.
     header_needed = not os.path.exists(outfile)
-    df.to_csv(outfile, mode='a', header=header_needed, index=False)
+    df.to_csv(outfile, mode='a', header=header_needed, index=False,
+              lineterminator='\n')
 
 
 def detect_etld_column(input_path: str, override: str = None) -> str:

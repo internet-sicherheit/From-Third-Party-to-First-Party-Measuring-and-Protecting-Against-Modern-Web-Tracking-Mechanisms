@@ -218,12 +218,14 @@ def main(argv=None) -> int:
     df = attribute(df, lookup)
 
     os.makedirs(os.path.dirname(store_path) or '.', exist_ok=True)
-    df.to_csv(store_path, index=False)
+    df.to_csv(store_path, index=False, lineterminator='
+')
     print(f"Wrote per-script attribution store to {store_path}")
 
     output_df = aggregate_per_cluster(df)
     os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
-    output_df.to_csv(output_path, index=False)
+    output_df.to_csv(output_path, index=False, lineterminator='
+')
     print(f"Wrote per-cluster attribution for {len(output_df)} clusters to {output_path}")
 
     attributed = int((df['organization'] != UNKNOWN).sum())
