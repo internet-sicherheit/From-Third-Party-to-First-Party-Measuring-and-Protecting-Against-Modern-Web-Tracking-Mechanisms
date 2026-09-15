@@ -10,16 +10,20 @@ builds ONE regex per itemset that checks "set membership" via positive lookahead
 for the itemset "has_if & has_r & has_v".
 
 CONFIG:
-  - PATTERN_CSV should point to a CSV with at least columns:
+  - --input should point to a CSV with at least columns:
         itemset,length,support_pos,support_neg,count_pos,count_neg,lift_ratio,...
-  - MIN_LIFT filters itemsets by lift_ratio >= MIN_LIFT.
-  - MAX_PARAMS limits how many query keys per itemset we convert (to avoid huge rules).
+  - --min-lift filters itemsets by lift_ratio >= MIN_LIFT.
+  - --max-params limits how many query keys per itemset we convert (to avoid huge rules).
 
-Usage example:
+The defaults (--min-lift 10, --max-params 3) are the configuration used for
+the paper: applied to the shipped itemset table they yield exactly the 181
+filter rules reported in Section 5.5.
 
-  python evaluation/create_rules3.py \
-    --input /home/ubuntu/Desktop/SST/contrastiv_pattern_mining_2.0/outputs_max_depth_3_161/itemsets_minsup_0.001.csv \
-    --output evaluation/rules_keys161_lookahead.txt \
+Usage example (paper configuration, all inputs are in the repository):
+
+  python 06_RuleSet_Generation/RuleSet_Mining/rules_generator/create_rules.py \
+    --input 06_RuleSet_Generation/RuleSet_Mining/fpg_outputs_max_depth__161/itemsets_minsup_0.001.csv \
+    --output out/rules_generated.txt \
     --min-lift 10 \
     --max-params 3
 """
@@ -104,14 +108,15 @@ def main() -> None:
     parser.add_argument(
         "--min-lift",
         type=float,
-        default=2.0,
-        help="Minimum lift_ratio threshold (default: 2.0).",
+        default=10.0,
+        help="Minimum lift_ratio threshold (default: 10.0, the paper configuration).",
     )
     parser.add_argument(
         "--max-params",
         type=int,
-        default=4,
-        help="Maximum number of query keys per itemset to convert (default: 4).",
+        default=3,
+        help="Maximum number of query keys per itemset to convert "
+             "(default: 3, the paper configuration).",
     )
     args = parser.parse_args()
 
