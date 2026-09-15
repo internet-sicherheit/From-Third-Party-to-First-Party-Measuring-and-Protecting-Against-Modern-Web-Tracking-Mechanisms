@@ -21,6 +21,11 @@ out/
 # Browser extension payloads and the Tranco list (~194 MB)
 05_Resources/extension/
 
+# EasyList classification intermediates (~21 GB). Excluded from Git too; the
+# claim scripts consume the downstream frozen exports, not these.
+Code/Preprocessing/EasyList_Classification/input/
+Code/Preprocessing/EasyList_Classification/output/
+
 **/__pycache__/
 **/*.pyc
 **/*.log
