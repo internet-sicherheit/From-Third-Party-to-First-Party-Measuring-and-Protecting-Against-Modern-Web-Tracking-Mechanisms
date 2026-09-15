@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 Create more compact regex rules from FP-Growth itemsets using lookaheads.
 
 Instead of generating one rule per permutation of query parameters, this script
@@ -64,7 +64,7 @@ def safe_literal(s: str) -> str:
 
 
 def build_lookahead_rule(params: Iterable[str]) -> str:
-    """
+    r"""
     Build a single regex rule using positive lookaheads to ensure that
     ALL of the given params appear somewhere in the query string, in ANY order.
 
