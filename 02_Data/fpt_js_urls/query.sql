@@ -1,0 +1,1 @@
+SELECT distinct JSON_VALUE(d, "$.url") FROM `magnetic-signer-465314-q4.server_side_tracking.cluster_k8`, UNNEST(JSON_EXTRACT_ARRAY(DATA)) d;

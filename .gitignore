@@ -1,6 +1,10 @@
 *.log
 .idea/*
-Code/Preprocessing/JavaScript/__pycache__
+__pycache__/
+*.pyc
+
+# Working directory for claim script outputs
+out/
 
 # Ignore specific OpenWPM crawl data and archives
 03_OpenWPM/19032025_crawl-data.sqlite
@@ -9,15 +13,47 @@ Code/Preprocessing/JavaScript/__pycache__
 03_OpenWPM/sst_OpenWPM.zip
 
 Code/Preprocessing/cookie_db.csv
-02_Data/js_hashes/benchmarks/*.txt
-02_Data/model_data/*
-02_data/*
 Code/test/*
 Code/Preprocessing/EasyList_Classification/input/*
 Code/Preprocessing/EasyList_Classification/output/*
 
 dump/*
-
 04_Page_Breakage/datadir/*
-
 replacements.txt
+
+# ---------------------------------------------------------------------------
+# 02_Data -- bulk crawl data
+#
+# The previous blanket rule "02_data/*" excluded the whole directory (it
+# matched case-insensitively on Windows), so none of the dataset was tracked.
+# Large raw exports are excluded individually below; the small files the claim
+# scripts need are tracked in Git, which lets Claims 2 and 3 run straight from
+# a clone without downloading anything.
+#
+# Everything excluded here is published in the Zenodo dataset record instead;
+# see docs/provenance.md and install.sh.
+# ---------------------------------------------------------------------------
+
+# Raw per-profile cookie/script joins (~23 GB)
+02_Data/potential_tracking_cookies/
+02_Data/potential_first_party_tracking_cookies/
+
+# Full per-profile ecosystem exports (~105 GB)
+02_Data/ecosystem/full_data/
+
+# Cluster payloads for the network-graph figures (~3.8 GB)
+02_Data/ecosystem/network_graph/
+
+# Page-breakage screenshots (~12 GB)
+02_Data/pbdata/
+
+# Per-profile content_hash -> simhash maps (113-166 MB each; above GitHub's
+# 100 MB per-file limit). Only consumed by the upstream extraction stage,
+# which additionally needs the raw PostgreSQL crawl database.
+02_Data/js_hashes/EU1_hashes.csv
+02_Data/js_hashes/EU2_hashes.csv
+02_Data/js_hashes/US1_hashes.csv
+02_Data/js_hashes/US2_hashes.csv
+02_Data/js_hashes/benchmarks/
+
+02_Data/model_data/
