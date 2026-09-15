@@ -1,0 +1,18 @@
+# Normalize line endings so the artifact works when cloned on any platform.
+# Shell scripts and Dockerfiles MUST use LF: a CRLF shebang makes the Linux
+# container fail with "bad interpreter: No such file or directory".
+* text=auto eol=lf
+
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.py        text eol=lf
+
+# Binary / large assets - never touch
+*.png   binary
+*.pdf   binary
+*.xpi   binary
+*.gz    binary
+*.zip   binary
+*.sqlite binary
