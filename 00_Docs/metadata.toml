@@ -1,0 +1,81 @@
+badge = "r"
+artifact_url = "https://github.com/internet-sicherheit/From-Third-Party-to-First-Party-Measuring-and-Protecting-Against-Modern-Web-Tracking-Mechanisms"
+cd = "b"
+citation = """
+@inproceedings{boettger.2026.acsac,
+  author    = {B\\"{o}ttger, Christian and Khouja, Tareq and Pohlmann, Norbert and Demir, Nurullah and Urban, Tobias},
+  title     = {From Third-Party to First-Party: Measuring and Protecting Against Modern Web Tracking Mechanisms},
+  booktitle = {Proceedings of the 42nd Annual Computer Security Applications Conference (ACSAC)},
+  year      = {2026},
+  publisher = {IEEE},
+  month     = dec,
+  note      = {To appear}
+}
+"""
+license_url = "https://www.apache.org/licenses/LICENSE-2.0"
+infrastructure_constraints = "The original data collection required distributed private infrastructure (4 VMs, VPN-based vantage points) and multi-week runtimes that cannot be replicated on public research infrastructure. The analysis pipeline itself is packaged as a self-contained Docker container operating on the frozen crawl dataset and was tested on our private infrastructure; it has no dependency on our institution's environment and should run on any Linux host meeting the stated hw/sw requirements."
+infrastructure_access = "Evaluators who cannot run the Docker container on their own hardware may access a pre-configured evaluation VM at our institution via SSH (public-key authentication). To preserve single-blind evaluation, please send an SSH public key via HotCRP / the AE chairs; we will provide hostname and a dedicated user account within 24 hours. The VM has the container image, the dataset, and all claim scripts pre-installed (see README, section \"Evaluation on the provided VM\"). No login analysis beyond standard system logs is performed."
+install_script = "https://github.com/internet-sicherheit/<REPO>/blob/main/install.sh"
+use = """
+Intended use: The artifact supports (i) reproduction of the paper's
+analysis pipeline -- first-party tracking (FPT) cookie detection via the
+four-criterion heuristic, SimHash-based JavaScript clustering, entity
+attribution, and filter-list rule generation -- on the frozen crawl
+dataset collected for the paper, and (ii) reuse of the individual
+pipeline components (heuristic, clustering, rule generator) as baselines
+or building blocks in future web-measurement research.
+
+Limitations / not suitable for:
+(1) Re-crawling: the artifact does not reproduce the data collection
+itself. Crawl results depend on time, vantage point, and site-side
+changes; re-running the crawler will yield different raw data. All
+quantitative claims are therefore evaluated against the included frozen
+dataset.
+(2) Production ad-blocking: the 181 generated filter-list rules are a
+research prototype. They have not undergone the review process of
+filter-list maintainers and should not be deployed to end users without
+independent breakage testing.
+(3) Compliance or legal assessment: a cookie flagged by the heuristic
+indicates tracking *capability* under our criteria (C1-C4), not a legal
+determination (e.g., under GDPR/ePrivacy) about a specific site or
+operator. The artifact must not be used to make claims about individual
+sites' legal compliance.
+(4) Session-management edge cases: as discussed in the paper (Table 5),
+cookies such as PHPSESSID and AWSALB can satisfy the heuristic despite
+legitimate origins; per-cookie classifications should not be interpreted
+as intent attribution.
+
+Data-specific limitations: the dataset is a snapshot; site behavior,
+cookies, and scripts observed reflect the collection period documented
+in docs/provenance.md and will differ from current web state. The
+dataset contains no personal data of end users; crawls were performed
+with fresh, stateless browser profiles.
+"""
+destructive = "None. The artifact operates offline on the included frozen dataset. All writes are confined to the container / a mounted output volume. No live web requests, no scanning, no modification of the host system outside the working directory."
+claim1 = "Applying the four-criterion FPT cookie heuristic (C1: lifetime > 90 days, C2: length >= 8 bytes, C3: uniqueness, C4: Ratcliff/Obershelp similarity <= 0.6) to the frozen crawl dataset (~25k sites) reproduces the first-party tracking cookie counts and prevalence figures reported in Section 4 / Table <X> of the paper."
+script1 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim1_heuristic.sh"
+expected1 = "The script outputs per-criterion and total FPT cookie counts matching Table <X> exactly (deterministic computation on frozen data); see claims/expected/claim1_output.txt for the reference output."
+claim2 = "SimHash-based clustering of the JavaScript corpus (64-bit fingerprints, Hamming distance k=8) followed by entity attribution reproduces the 860 clusters and the top-entity attribution reported in Table 5, including the documented edge cases (PHPSESSID, AWSALB)."
+script2 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim2_clustering.sh"
+expected2 = "860 clusters and cluster-to-entity mapping identical to Table 5 (deterministic given fixed fingerprints); reference output in claims/expected/claim2_output.txt."
+claim3 = "The rule-generation component derives the 181 filter-list rules published with the paper (Section 5.5) from the detected FPT/SST endpoints; session-management cookies are excluded from rule generation."
+script3 = "https://github.com/internet-sicherheit/<REPO>/blob/main/claims/claim3_rules.sh"
+expected3 = "Output file rules.txt contains 181 rules, byte-identical to claims/expected/rules_reference.txt."
+hw = """
+x86-64 Linux host
+>= 8 CPU cores recommended (pipeline parallelizes; runs on 4 cores with longer runtime)
+>= 32 GB RAM
+>= <SIZE> GB free disk (frozen dataset + intermediate outputs)
+No GPU required
+Expected total runtime for all claim scripts: approx. <N> hours
+"""
+sw = """
+Docker >= 24 (or compatible container runtime)
+Linux host recommended; tested on Ubuntu 22.04 / WSL2
+All other dependencies are contained in the provided Docker image
+"""
+api = "North Data"
+gui = "n"
+provenance = "https://github.com/internet-sicherheit/<REPO>/blob/main/docs/provenance.md"
+ethics = "https://github.com/internet-sicherheit/<REPO>/blob/main/docs/ethics.md"
+readme = "https://github.com/internet-sicherheit/From-Third-Party-to-First-Party-Measuring-and-Protecting-Against-Modern-Web-Tracking-Mechanisms/blob/main/README.md"

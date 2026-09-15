@@ -1,0 +1,18 @@
+services:
+  base: &base
+    build: .
+    volumes:
+      - ./02_Data:/artifact/02_Data:ro
+      - ./out:/artifact/out
+
+  claim1:
+    <<: *base
+    command: ["claims/claim1_heuristic.sh"]
+
+  claim2:
+    <<: *base
+    command: ["claims/claim2_cluster.sh"]
+
+  claim3:
+    <<: *base
+    command: ["claims/claim3_rules.sh"]
