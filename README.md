@@ -130,6 +130,14 @@ BigQuery join of the clustering against the cookie and script tables. That
 stage needs the authors' private BigQuery project and is not part of this
 artifact.
 
+**Paper figures.** [`docs/figures.md`](docs/figures.md) maps every figure to
+its generating script and input files. Figures 3–6 regenerate from tracked
+files; the tracking-script variant of Figure 2 does as well. The all-scripts
+variant of Figure 2 reads four per-profile exports that are not in the
+repository and is listed there as blocked, together with a profile-label
+discrepancy between its cached rendering and the Zenodo exports. Figure 1 is a
+hand-drawn diagram with no script.
+
 ### Available, not reproducible
 
 **Raw data collection.** The crawl used four VMs on VPN-based vantage points
@@ -249,8 +257,10 @@ frozen CSVs: `overview.ipynb` (cluster size distribution),
 `network_graph/network_graph_paper.ipynb` (top-5 cluster graph),
 `top_cluster/attribution.ipynb` (top-10 attribution), and
 [`Code/Analysis/JavaScript/overview.ipynb`](Code/Analysis/JavaScript/overview.ipynb)
-(UpSet plot). Notebooks depending on `02_Data/ecosystem/network_graph/` need
-that directory from Zenodo.
+(UpSet plot). The per-figure mapping, inputs, and blockers are in
+[`docs/figures.md`](docs/figures.md). No notebook reads the 3.8 GB
+`02_Data/ecosystem/network_graph/` payloads; they are archived on Zenodo for
+inspection only.
 
 ## Documentation
 
@@ -259,6 +269,7 @@ that directory from Zenodo.
 | [`docs/provenance.md`](docs/provenance.md) | Collection period, site sampling, infrastructure, dataset scale |
 | [`docs/ethics.md`](docs/ethics.md) | Ethical considerations and responsible-use statement |
 | [`docs/schema.md`](docs/schema.md) | Column schemas for every file the claim scripts touch |
+| [`docs/figures.md`](docs/figures.md) | Generating script, inputs, and offline reproducibility of each paper figure |
 | [`claims/expected/README.md`](claims/expected/README.md) | Provenance of each frozen reference output |
 | [`metadata.toml`](metadata.toml) | ACSAC artifact metadata |
 
