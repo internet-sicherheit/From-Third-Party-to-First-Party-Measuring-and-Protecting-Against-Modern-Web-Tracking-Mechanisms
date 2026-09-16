@@ -3,6 +3,13 @@
 # never be copied into the image.
 02_Data/
 
+# Exception: the WhoTracksMe TrackerDB (17 MB) IS baked into the image, at
+# /opt/trackerdb. Entity attribution spawns a Node process per distinct domain,
+# and resolving node_modules over a bind mount costs ~2 s per spawn on Docker
+# Desktop (Windows/macOS) versus milliseconds from the image filesystem --
+# a 9+ hour run instead of minutes. See Dockerfile and compose.yaml.
+!02_Data/whotracksme/
+
 .git/
 .idea/
 out/
