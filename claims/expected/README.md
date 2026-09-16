@@ -44,6 +44,8 @@ output depends on how rows are distributed across shards; running it on the
 shards shipped here disagrees with that frozen output on about 31% of the
 overlapping cookies. See README, section "Scope of reproduction".
 
+Please check [README](../../02_Data/README.md) for download extraction duo to the datasets.
+
 ## cluster_reference_k8.txt
 
 SimHash clustering of `02_Data/ecosystem/simhashes_24112025.csv` (26,606
