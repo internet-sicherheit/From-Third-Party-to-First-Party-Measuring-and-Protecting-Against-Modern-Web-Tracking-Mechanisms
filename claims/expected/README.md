@@ -46,7 +46,7 @@ overlapping cookies. See README, section "Scope of reproduction".
 
 ## cluster_reference_k8.txt
 
-SimHash clustering of `02_Data/ecosystem/simhashes_24112025.csv` (26,605
+SimHash clustering of `02_Data/ecosystem/simhashes_24112025.csv` (26,606
 fingerprints) with f=64 and k=8, yielding 24,914 clusters (23,926 singletons,
 988 with two or more members, largest 67).
 

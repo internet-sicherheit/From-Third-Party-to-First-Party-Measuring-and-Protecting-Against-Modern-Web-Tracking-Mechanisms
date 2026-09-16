@@ -2,7 +2,7 @@
 # Claim 2: SimHash clustering (64-bit fingerprints, Hamming distance k=8) of
 # the JavaScript corpus, followed by entity attribution via WhoTracksMe.
 #
-# Stage 1  cluster 26,605 frozen fingerprints -> 24,914 clusters
+# Stage 1  cluster 26,606 frozen fingerprints -> 24,914 clusters
 # Stage 2  attribute cluster scripts to organizations -> 11,380 clusters
 #
 # WHAT THIS VERIFIES
