@@ -6,6 +6,9 @@ __pycache__/
 # Working directory for claim script outputs
 out/
 
+# PDFs written by Code/Figures/reproduce_figures.ipynb
+Code/Figures/output/
+
 # Ignore specific OpenWPM crawl data and archives
 03_OpenWPM/19032025_crawl-data.sqlite
 03_OpenWPM/19032025_crawl-data.zip

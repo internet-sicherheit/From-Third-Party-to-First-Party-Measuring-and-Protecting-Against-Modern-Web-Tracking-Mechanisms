@@ -1,0 +1,12 @@
+# Dependencies for Code/Figures/reproduce_figures.ipynb only.
+#
+# Kept separate from the top-level requirements.txt on purpose: the figures are
+# not part of the evaluated claims, and the claim image should not carry
+# Jupyter or upsetplot. Versions shared with requirements.txt are pinned to the
+# same release so the two environments do not drift.
+matplotlib==3.9.2
+pandas==2.2.3
+numpy==2.1.3
+networkx==3.4.2
+upsetplot==0.9.0
+jupyter==1.1.1
