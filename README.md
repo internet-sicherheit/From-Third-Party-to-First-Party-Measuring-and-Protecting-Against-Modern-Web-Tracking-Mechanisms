@@ -131,10 +131,12 @@ stage needs the authors' private BigQuery project and is not part of this
 artifact.
 
 **Paper figures.** [`docs/figures.md`](docs/figures.md) maps every figure to
-its generating script and input files. Figures 3–6 regenerate from tracked
-files; the tracking-script variant of Figure 2 does as well. The all-scripts
-variant of Figure 2 reads four per-profile exports that are not in the
-repository and is listed there as blocked, together with a profile-label
+its generating script and input files, and
+[`Code/Figures/reproduce_figures.ipynb`](Code/Figures/reproduce_figures.ipynb)
+regenerates Figures 2–6 from tracked files in about a minute (committed with
+its outputs; dependencies in `Code/Figures/requirements-figures.txt`). The
+all-scripts variant of Figure 2 reads four per-profile exports that are not in
+the repository and is listed as blocked, together with a profile-label
 discrepancy between its cached rendering and the Zenodo exports. Figure 1 is a
 hand-drawn diagram with no script.
 
@@ -188,6 +190,7 @@ Code/
   Heuristik/            FPT cookie heuristic (Claim 1)
   Preprocessing/        Cookie classification, EasyList tagging, fingerprints
   Analysis/             Clustering, attribution, figures (Claim 2)
+  Figures/              Notebook regenerating the paper figures
   Queries/              BigQuery SQL for the preprocessing and analysis stages
 ```
 

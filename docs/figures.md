@@ -9,6 +9,24 @@ reads is tracked in Git, and we re-ran it on 2026-09-16 against the tracked
 files. Figures are not covered by the byte-exact claim scripts; the frozen
 PDFs next to each notebook are the reference renderings.
 
+**One-stop notebook.**
+[`Code/Figures/reproduce_figures.ipynb`](../Code/Figures/reproduce_figures.ipynb)
+ports the cells identified below into a single notebook that regenerates
+Figures 2–6 from the tracked files in about a minute and writes the PDFs to
+`Code/Figures/output/`. It is committed with its outputs, so the reference
+renderings can be inspected without running it. Dependencies are pinned in
+[`Code/Figures/requirements-figures.txt`](../Code/Figures/requirements-figures.txt),
+separate from the claim scripts' `requirements.txt`:
+
+```bash
+pip install -r Code/Figures/requirements-figures.txt
+jupyter nbconvert --to notebook --execute --inplace Code/Figures/reproduce_figures.ipynb
+```
+
+The notebook derives the Figure 2 profile labels from `browser_id` rather than
+from file names (see [Figure 2](#figure-2)) and asserts the N99 = 161 cutoff of
+Figures 5 and 6. The table below still refers to the original source cells.
+
 | Figure | Script | Input data | Reproducible offline | Notes |
 |---|---|---|---|---|
 | 1 — Concept diagram (SST/CST) | N/A (hand-drawn) | — | N/A | Drawn in diagrams.net; source file `Code/Analysis/Figures/SST_CST.drawio`. No generating script. |
@@ -79,7 +97,8 @@ example and not the paper's input. Running on `positive_train.csv` (the
 The Docker image installs only `requirements.txt`, which covers Figures 3–6
 (`matplotlib`, `networkx`, `pandas`, `numpy`). Regenerating the notebooks
 additionally needs a Jupyter kernel or `nbconvert`, and Figure 2 needs
-`upsetplot` (0.9.0 was used), which is not pinned. Cell 7 of
+`upsetplot`; both are pinned in `Code/Figures/requirements-figures.txt`
+(upsetplot 0.9.0, jupyter 1.1.1). Cell 7 of
 `Code/Analysis/ecosystem/overview.ipynb` imports `seaborn`, but that cell is
 not part of any paper figure.
 
