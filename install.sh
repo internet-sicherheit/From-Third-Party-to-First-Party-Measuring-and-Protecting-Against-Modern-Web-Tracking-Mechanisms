@@ -44,10 +44,8 @@ if [ -d "$CLAIM1_DIR" ] && [ -n "$(ls -A "$CLAIM1_DIR" 2>/dev/null)" ]; then
 elif [ "$WANT_DATASET" = "0" ]; then
   echo "      --no-dataset given - skipping. Claim 1 will not be runnable;"
   echo "      Claims 2 and 3 do not need it."
-elif [[ "$DATASET_URL" == *"<TODO>"* ]]; then
-  echo "      WARNING: the Zenodo record is not yet published, so the dataset" >&2
-  echo "      URL in this script is still a placeholder. Claims 2 and 3 run" >&2
-  echo "      without it. To run Claim 1, obtain the dataset and extract it to" >&2
+elif [[ "$DATASET_URL" == *"https://doi.org/10.5281/zenodo.22797030"* ]]; then
+  echo "       To run Claim 1, obtain the dataset and extract it to" >&2
   echo "      $CLAIM1_DIR, or re-run with DATASET_URL=... DATASET_SHA256=..." >&2
 else
   echo "      Downloading frozen dataset..."
