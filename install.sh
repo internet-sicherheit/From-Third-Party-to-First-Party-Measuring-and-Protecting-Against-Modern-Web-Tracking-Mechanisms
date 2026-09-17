@@ -44,7 +44,7 @@ if [ -d "$CLAIM1_DIR" ] && [ -n "$(ls -A "$CLAIM1_DIR" 2>/dev/null)" ]; then
 elif [ "$WANT_DATASET" = "0" ]; then
   echo "      --no-dataset given - skipping. Claim 1 will not be runnable;"
   echo "      Claims 2 and 3 do not need it."
-else;
+else
   echo "       To run Claim 1, obtain the dataset (https://doi.org/10.5281/zenodo.22797030) and extract it to" >&2
   echo "      $CLAIM1_DIR" >&2
 fi
