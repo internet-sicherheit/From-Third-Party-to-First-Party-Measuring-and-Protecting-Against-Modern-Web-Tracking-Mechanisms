@@ -46,7 +46,7 @@ elif [ "$WANT_DATASET" = "0" ]; then
   echo "      Claims 2 and 3 do not need it."
 else [[ "$DATASET_URL" == *"https://doi.org/10.5281/zenodo.22797030"* ]]; then
   echo "       To run Claim 1, obtain the dataset and extract it to" >&2
-  echo "      $CLAIM1_DIR, or re-run with DATASET_URL=... DATASET_SHA256=..." >&2
+  echo "      $CLAIM1_DIR" >&2
 fi
 
 echo
