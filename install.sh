@@ -44,15 +44,9 @@ if [ -d "$CLAIM1_DIR" ] && [ -n "$(ls -A "$CLAIM1_DIR" 2>/dev/null)" ]; then
 elif [ "$WANT_DATASET" = "0" ]; then
   echo "      --no-dataset given - skipping. Claim 1 will not be runnable;"
   echo "      Claims 2 and 3 do not need it."
-elif [[ "$DATASET_URL" == *"https://doi.org/10.5281/zenodo.22797030"* ]]; then
+else [[ "$DATASET_URL" == *"https://doi.org/10.5281/zenodo.22797030"* ]]; then
   echo "       To run Claim 1, obtain the dataset and extract it to" >&2
   echo "      $CLAIM1_DIR, or re-run with DATASET_URL=... DATASET_SHA256=..." >&2
-else
-  echo "      Downloading frozen dataset..."
-  curl -L -o frozen_dataset.tar.gz "$DATASET_URL"
-  echo "${DATASET_SHA256}  frozen_dataset.tar.gz" | sha256sum -c -
-  tar xzf frozen_dataset.tar.gz
-  rm frozen_dataset.tar.gz
 fi
 
 echo
